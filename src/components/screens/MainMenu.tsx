@@ -2,8 +2,8 @@
 import React from 'react';
 import { useGame } from '../../contexts/GameContext';
 import { Button } from '../ui/button';
-import { Card, CardContent } from '../ui/card';
-import { TrendingUp, Package, ShoppingCart, Settings, HelpCircle, Gift } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { TrendingUp, ShoppingBag, Package, Settings, HelpCircle, DollarSign } from 'lucide-react';
 
 const MainMenu: React.FC = () => {
   const { state, dispatch } = useGame();
@@ -14,91 +14,105 @@ const MainMenu: React.FC = () => {
     return `$${amount.toFixed(0)}`;
   };
   
-  const portfolioValue = Object.entries(state.portfolio).reduce((total, [stockId, holding]) => {
-    const stock = state.stocks.find(s => s.id === stockId);
-    return total + (stock ? stock.price * holding.shares : 0);
-  }, 0);
+  const getTotalPortfolioValue = () => {
+    return Object.entries(state.portfolio).reduce((total, [stockId, holding]) => {
+      const stock = state.stocks.find(s => s.id === stockId);
+      return total + (stock ? holding.shares * stock.price : 0);
+    }, 0);
+  };
   
-  const totalWealth = state.money + portfolioValue;
+  const totalWealth = state.money + getTotalPortfolioValue();
   
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 text-white">
-      <div className="text-center mb-8">
-        <h1 className="text-5xl font-bold mb-2 text-yellow-300 drop-shadow-lg">
-          💰 Stock Tycoon
-        </h1>
-        <p className="text-xl opacity-90">Build Your Virtual Empire!</p>
-      </div>
-      
-      <Card className="bg-white/10 backdrop-blur-md border-white/20 mb-8 w-full max-w-md">
-        <CardContent className="p-6 text-center">
-          <div className="text-sm opacity-80 mb-1">Your Wealth</div>
-          <div className="text-3xl font-bold text-green-300 mb-2">
-            {formatMoney(totalWealth)}
-          </div>
-          <div className="text-sm opacity-80">
-            Cash: {formatMoney(state.money)} | Portfolio: {formatMoney(portfolioValue)}
-          </div>
-        </CardContent>
-      </Card>
-      
-      <div className="grid grid-cols-2 gap-4 w-full max-w-md mb-8">
-        <Button 
-          onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'market' })}
-          className="h-16 bg-green-500 hover:bg-green-600 text-white font-semibold text-lg"
-        >
-          <TrendingUp className="w-6 h-6 mr-2" />
-          Trade
-        </Button>
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 p-4">
+      <div className="max-w-md mx-auto">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-white mb-2">Stock Tycoon</h1>
+          <p className="text-white/80">Build Your Financial Empire</p>
+        </div>
         
-        <Button 
-          onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'inventory' })}
-          className="h-16 bg-blue-500 hover:bg-blue-600 text-white font-semibold text-lg"
-        >
-          <Package className="w-6 h-6 mr-2" />
-          Assets
-        </Button>
+        <Card className="bg-white/10 backdrop-blur-md border-white/20 mb-6">
+          <CardHeader>
+            <CardTitle className="text-white text-center">Your Wealth</CardTitle>
+          </CardHeader>
+          <CardContent className="text-center">
+            <div className="text-3xl font-bold text-green-400 mb-2">
+              {formatMoney(totalWealth)}
+            </div>
+            <div className="text-white/70 text-sm">
+              Cash: {formatMoney(state.money)} | Stocks: {formatMoney(getTotalPortfolioValue())}
+            </div>
+          </CardContent>
+        </Card>
         
-        <Button 
-          onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'shop' })}
-          className="h-16 bg-purple-500 hover:bg-purple-600 text-white font-semibold text-lg"
-        >
-          <ShoppingCart className="w-6 h-6 mr-2" />
-          Shop
-        </Button>
-        
-        <Button 
-          onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'settings' })}
-          className="h-16 bg-gray-500 hover:bg-gray-600 text-white font-semibold text-lg"
-        >
-          <Settings className="w-6 h-6 mr-2" />
-          Settings
-        </Button>
-      </div>
-      
-      <div className="flex gap-4 w-full max-w-md">
-        <Button 
-          onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'help' })}
-          variant="outline"
-          className="flex-1 bg-white/10 border-white/30 text-white hover:bg-white/20"
-        >
-          <HelpCircle className="w-4 h-4 mr-2" />
-          Help
-        </Button>
-        
-        {!state.dailyRewardClaimed && (
+        <div className="space-y-4">
           <Button 
-            onClick={() => dispatch({ type: 'CLAIM_DAILY_REWARD' })}
-            className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white animate-pulse"
+            onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'market' })}
+            className="w-full bg-green-500 hover:bg-green-600 text-white text-lg py-6"
           >
-            <Gift className="w-4 h-4 mr-2" />
-            Daily Bonus
+            <TrendingUp className="w-6 h-6 mr-3" />
+            Trade Stocks
           </Button>
+          
+          <Button 
+            onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'shop' })}
+            className="w-full bg-purple-500 hover:bg-purple-600 text-white text-lg py-6"
+          >
+            <ShoppingBag className="w-6 h-6 mr-3" />
+            Luxury Shop
+          </Button>
+          
+          <Button 
+            onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'money-shop' })}
+            className="w-full bg-yellow-500 hover:bg-yellow-600 text-white text-lg py-6"
+          >
+            <DollarSign className="w-6 h-6 mr-3" />
+            Get Money
+          </Button>
+          
+          <Button 
+            onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'inventory' })}
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white text-lg py-6"
+          >
+            <Package className="w-6 h-6 mr-3" />
+            My Collection
+          </Button>
+          
+          <div className="grid grid-cols-2 gap-4 mt-6">
+            <Button 
+              onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'settings' })}
+              variant="outline"
+              className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+            >
+              <Settings className="w-4 h-4 mr-2" />
+              Settings
+            </Button>
+            
+            <Button 
+              onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'help' })}
+              variant="outline"
+              className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+            >
+              <HelpCircle className="w-4 h-4 mr-2" />
+              Help
+            </Button>
+          </div>
+        </div>
+        
+        {/* Daily Reward Notification */}
+        {!state.dailyRewardClaimed && (
+          <Card className="bg-yellow-500/20 backdrop-blur-md border-yellow-400/30 mt-6">
+            <CardContent className="p-4 text-center">
+              <div className="text-yellow-400 font-semibold mb-2">Daily Bonus Available!</div>
+              <Button
+                onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'money-shop' })}
+                className="bg-yellow-500 hover:bg-yellow-600 text-white"
+              >
+                Claim $1,000
+              </Button>
+            </CardContent>
+          </Card>
         )}
-      </div>
-      
-      <div className="mt-8 text-center text-sm opacity-60">
-        <p>Login Streak: {state.loginStreak} days</p>
       </div>
     </div>
   );

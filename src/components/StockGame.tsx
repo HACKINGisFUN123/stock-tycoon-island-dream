@@ -6,6 +6,7 @@ import MarketScreen from './screens/MarketScreen';
 import TradingScreen from './screens/TradingScreen';
 import InventoryScreen from './screens/InventoryScreen';
 import ShopScreen from './screens/ShopScreen';
+import MoneyShopScreen from './screens/MoneyShopScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import HelpScreen from './screens/HelpScreen';
 
@@ -24,6 +25,8 @@ const GameRouter: React.FC = () => {
         return <InventoryScreen />;
       case 'shop':
         return <ShopScreen />;
+      case 'money-shop':
+        return <MoneyShopScreen />;
       case 'settings':
         return <SettingsScreen />;
       case 'help':
