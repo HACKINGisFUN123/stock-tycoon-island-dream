@@ -67,7 +67,7 @@ const ShopScreen: React.FC = () => {
                   return (
                     <Card 
                       key={item.id} 
-                      className={`backdrop-blur-md border-white/20 ${
+                      className={`backdrop-blur-md border-white/20 relative overflow-hidden ${
                         item.owned 
                           ? 'bg-green-500/20 border-green-400/30' 
                           : !isUnlocked 
@@ -78,8 +78,20 @@ const ShopScreen: React.FC = () => {
                       }`}
                     >
                       <CardContent className="p-4">
+                        <div className="relative mb-4">
+                          <img 
+                            src={item.image} 
+                            alt={item.name}
+                            className={`w-full h-32 object-cover rounded-lg ${!isUnlocked ? 'grayscale' : ''}`}
+                          />
+                          {!isUnlocked && (
+                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-lg">
+                              <Lock className="w-8 h-8 text-white" />
+                            </div>
+                          )}
+                        </div>
+                        
                         <div className="text-center mb-4">
-                          <div className="text-4xl mb-2">{item.image}</div>
                           <h3 className="font-semibold text-white text-lg">{item.name}</h3>
                           <p className="text-sm text-white/70">{item.description}</p>
                         </div>
@@ -88,6 +100,11 @@ const ShopScreen: React.FC = () => {
                           <div className="text-2xl font-bold text-yellow-400">
                             {formatMoney(item.price)}
                           </div>
+                          {!isUnlocked && (
+                            <div className="text-xs text-white/60 mt-1">
+                              Unlock at {formatMoney(item.price * 0.5)}
+                            </div>
+                          )}
                         </div>
                         
                         {item.owned ? (

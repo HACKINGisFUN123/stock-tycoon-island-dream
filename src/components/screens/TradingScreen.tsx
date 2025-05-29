@@ -3,15 +3,14 @@ import React, { useState, useEffect } from 'react';
 import { useGame } from '../../contexts/GameContext';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Input } from '../ui/input';
-import { ArrowLeft, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { ArrowLeft, TrendingUp, TrendingDown, Minus, Plus, Lock } from 'lucide-react';
 import StockChart from '../StockChart';
 
 const TradingScreen: React.FC = () => {
   const { state, dispatch } = useGame();
   const [selectedStockId, setSelectedStockId] = useState<string | null>(null);
-  const [amount, setAmount] = useState<string>('');
-  const [shares, setShares] = useState<string>('');
+  const [buyShares, setBuyShares] = useState<number>(1);
+  const [sellShares, setSellShares] = useState<number>(1);
   
   useEffect(() => {
     const stockId = localStorage.getItem('selectedStockId');
@@ -53,43 +52,49 @@ const TradingScreen: React.FC = () => {
     }
   };
   
+  const maxBuyShares = Math.floor(state.money / stock.price);
+  const maxSellShares = holding ? holding.shares : 0;
+  
+  const adjustBuyShares = (delta: number) => {
+    setBuyShares(prev => Math.max(1, Math.min(maxBuyShares, prev + delta)));
+  };
+  
+  const adjustSellShares = (delta: number) => {
+    setSellShares(prev => Math.max(1, Math.min(maxSellShares, prev + delta)));
+  };
+  
+  const setBuyToMax = () => {
+    setBuyShares(maxBuyShares);
+  };
+  
+  const setSellToMax = () => {
+    setSellShares(maxSellShares);
+  };
+  
   const handleBuy = () => {
-    const investAmount = parseFloat(amount);
-    if (isNaN(investAmount) || investAmount <= 0) return;
-    
-    const sharesToBuy = Math.floor(investAmount / stock.price);
-    if (sharesToBuy > 0) {
+    if (buyShares > 0 && buyShares <= maxBuyShares) {
       dispatch({
         type: 'BUY_STOCK',
         stockId: stock.id,
-        amount: sharesToBuy,
+        amount: buyShares,
         price: stock.price
       });
-      setAmount('');
-      setShares('');
+      setBuyShares(1);
     }
   };
   
   const handleSell = () => {
-    const sharesToSell = parseInt(shares);
-    if (isNaN(sharesToSell) || sharesToSell <= 0 || !holding) return;
-    
-    const maxShares = holding.shares;
-    const actualShares = Math.min(sharesToSell, maxShares);
-    
-    if (actualShares > 0) {
+    if (sellShares > 0 && sellShares <= maxSellShares && holding) {
       dispatch({
         type: 'SELL_STOCK',
         stockId: stock.id,
-        amount: actualShares,
+        amount: sellShares,
         price: stock.price
       });
-      setAmount('');
-      setShares('');
+      setSellShares(1);
     }
   };
   
-  const maxBuyShares = Math.floor(state.money / stock.price);
   const priceChange = getPriceChange();
   const portfolioValue = holding ? holding.shares * stock.price : 0;
   const profitLoss = holding ? (stock.price - holding.avgBuyPrice) * holding.shares : 0;
@@ -179,28 +184,49 @@ const TradingScreen: React.FC = () => {
               <CardTitle className="text-green-400">Buy Shares</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <label className="text-white/80 text-sm block mb-2">
-                  Investment Amount ($)
-                </label>
-                <Input
-                  type="number"
-                  placeholder="Enter amount"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  className="bg-white/10 border-white/30 text-white placeholder-white/50"
-                />
-                <div className="text-xs text-white/60 mt-1">
-                  Max: {formatMoney(state.money)} ({maxBuyShares} shares)
+              <div className="text-center">
+                <div className="text-white/80 text-sm mb-2">Number of Shares</div>
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <Button
+                    onClick={() => adjustBuyShares(-1)}
+                    disabled={buyShares <= 1}
+                    className="w-10 h-10 bg-green-600 hover:bg-green-700 text-white p-0"
+                  >
+                    <Minus className="w-4 h-4" />
+                  </Button>
+                  
+                  <div className="bg-white/10 border border-white/30 rounded px-4 py-2 text-white text-xl font-bold min-w-[80px] text-center">
+                    {buyShares}
+                  </div>
+                  
+                  <Button
+                    onClick={() => adjustBuyShares(1)}
+                    disabled={buyShares >= maxBuyShares}
+                    className="w-10 h-10 bg-green-600 hover:bg-green-700 text-white p-0"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </Button>
+                </div>
+                
+                <Button
+                  onClick={setBuyToMax}
+                  disabled={maxBuyShares === 0}
+                  className="mb-2 bg-green-600 hover:bg-green-700 text-white text-sm px-3 py-1"
+                >
+                  MAX ({maxBuyShares})
+                </Button>
+                
+                <div className="text-xs text-white/60">
+                  Total Cost: {formatMoney(buyShares * stock.price)}
                 </div>
               </div>
               
               <Button 
                 onClick={handleBuy}
                 className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold"
-                disabled={!amount || parseFloat(amount) <= 0 || parseFloat(amount) > state.money}
+                disabled={buyShares <= 0 || buyShares > maxBuyShares || maxBuyShares === 0}
               >
-                Buy Shares
+                Buy {buyShares} Share{buyShares !== 1 ? 's' : ''}
               </Button>
             </CardContent>
           </Card>
@@ -210,29 +236,49 @@ const TradingScreen: React.FC = () => {
               <CardTitle className="text-red-400">Sell Shares</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <label className="text-white/80 text-sm block mb-2">
-                  Number of Shares
-                </label>
-                <Input
-                  type="number"
-                  placeholder="Enter shares"
-                  value={shares}
-                  onChange={(e) => setShares(e.target.value)}
-                  className="bg-white/10 border-white/30 text-white placeholder-white/50"
-                  disabled={!holding}
-                />
-                <div className="text-xs text-white/60 mt-1">
-                  Owned: {holding ? holding.shares : 0} shares
+              <div className="text-center">
+                <div className="text-white/80 text-sm mb-2">Number of Shares</div>
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <Button
+                    onClick={() => adjustSellShares(-1)}
+                    disabled={sellShares <= 1 || !holding}
+                    className="w-10 h-10 bg-red-600 hover:bg-red-700 text-white p-0"
+                  >
+                    <Minus className="w-4 h-4" />
+                  </Button>
+                  
+                  <div className="bg-white/10 border border-white/30 rounded px-4 py-2 text-white text-xl font-bold min-w-[80px] text-center">
+                    {holding ? sellShares : 0}
+                  </div>
+                  
+                  <Button
+                    onClick={() => adjustSellShares(1)}
+                    disabled={sellShares >= maxSellShares || !holding}
+                    className="w-10 h-10 bg-red-600 hover:bg-red-700 text-white p-0"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </Button>
+                </div>
+                
+                <Button
+                  onClick={setSellToMax}
+                  disabled={!holding || maxSellShares === 0}
+                  className="mb-2 bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1"
+                >
+                  MAX ({maxSellShares})
+                </Button>
+                
+                <div className="text-xs text-white/60">
+                  Total Value: {holding ? formatMoney(sellShares * stock.price) : '$0.00'}
                 </div>
               </div>
               
               <Button 
                 onClick={handleSell}
                 className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold"
-                disabled={!holding || !shares || parseInt(shares) <= 0 || parseInt(shares) > holding.shares}
+                disabled={!holding || sellShares <= 0 || sellShares > maxSellShares}
               >
-                Sell Shares
+                Sell {holding ? sellShares : 0} Share{sellShares !== 1 ? 's' : ''}
               </Button>
             </CardContent>
           </Card>

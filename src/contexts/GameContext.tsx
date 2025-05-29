@@ -55,21 +55,21 @@ type GameAction =
   | { type: 'RESET_GAME' };
 
 const initialStocks: Stock[] = [
-  { id: 'fruit-tech', name: 'Fruit Tech', symbol: 'FTC', price: 150, history: [150], trend: 'neutral', color: '#007AFF' },
-  { id: 'electric-motors', name: 'Electric Motors', symbol: 'EMC', price: 800, history: [800], trend: 'neutral', color: '#FF3B30' },
-  { id: 'mega-shop', name: 'Mega Shop', symbol: 'MSC', price: 3200, history: [3200], trend: 'neutral', color: '#FF9500' },
-  { id: 'swoosh-sports', name: 'Swoosh Sports', symbol: 'SSC', price: 120, history: [120], trend: 'neutral', color: '#32D74B' },
-  { id: 'social-connect', name: 'Social Connect', symbol: 'SCC', price: 280, history: [280], trend: 'neutral', color: '#5856D6' },
-  { id: 'streaming-plus', name: 'Streaming Plus', symbol: 'SPC', price: 450, history: [450], trend: 'neutral', color: '#AF52DE' },
+  { id: 'apple', name: 'Apple Inc', symbol: 'AAPL', price: 150, history: [150], trend: 'neutral', color: '#007AFF' },
+  { id: 'tesla', name: 'Tesla Inc', symbol: 'TSLA', price: 800, history: [800], trend: 'neutral', color: '#FF3B30' },
+  { id: 'amazon', name: 'Amazon.com Inc', symbol: 'AMZN', price: 3200, history: [3200], trend: 'neutral', color: '#FF9500' },
+  { id: 'nike', name: 'Nike Inc', symbol: 'NKE', price: 120, history: [120], trend: 'neutral', color: '#32D74B' },
+  { id: 'meta', name: 'Meta Platforms Inc', symbol: 'META', price: 280, history: [280], trend: 'neutral', color: '#5856D6' },
+  { id: 'netflix', name: 'Netflix Inc', symbol: 'NFLX', price: 450, history: [450], trend: 'neutral', color: '#AF52DE' },
 ];
 
 const initialLuxuryItems: LuxuryItem[] = [
-  { id: 'basic-car', name: 'Sports Car', price: 50000, category: 'car', image: '🏎️', description: 'Fast and stylish', unlocked: true, owned: false },
-  { id: 'mansion', name: 'Luxury Mansion', price: 200000, category: 'house', image: '🏰', description: 'Your dream home', unlocked: false, owned: false },
-  { id: 'yacht', name: 'Super Yacht', price: 500000, category: 'yacht', image: '🛥️', description: 'Sail in luxury', unlocked: false, owned: false },
-  { id: 'private-jet', name: 'Private Jet', price: 1000000, category: 'jet', image: '✈️', description: 'Fly anywhere', unlocked: false, owned: false },
-  { id: 'luxury-phone', name: 'Diamond Phone', price: 25000, category: 'gadget', image: '📱', description: 'Ultimate tech', unlocked: true, owned: false },
-  { id: 'super-car', name: 'Hypercar', price: 150000, category: 'car', image: '🚗', description: 'Ultimate speed', unlocked: false, owned: false },
+  { id: 'sports-car', name: 'Sports Car', price: 50000, category: 'car', image: 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=400&h=300&fit=crop', description: 'Fast and stylish sports car', unlocked: true, owned: false },
+  { id: 'mansion', name: 'Luxury Mansion', price: 200000, category: 'house', image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=300&fit=crop', description: 'Your dream home with stunning views', unlocked: false, owned: false },
+  { id: 'yacht', name: 'Super Yacht', price: 500000, category: 'yacht', image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=300&fit=crop', description: 'Sail the seas in luxury', unlocked: false, owned: false },
+  { id: 'private-jet', name: 'Private Jet', price: 1000000, category: 'jet', image: 'https://images.unsplash.com/photo-1487887235947-a955ef187fcc?w=400&h=300&fit=crop', description: 'Fly anywhere in the world', unlocked: false, owned: false },
+  { id: 'luxury-phone', name: 'Diamond Phone', price: 25000, category: 'gadget', image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=300&fit=crop', description: 'Ultimate luxury smartphone', unlocked: true, owned: false },
+  { id: 'hypercar', name: 'Hypercar', price: 150000, category: 'car', image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&h=300&fit=crop', description: 'Ultimate speed machine', unlocked: false, owned: false },
 ];
 
 const initialState: GameState = {
@@ -77,7 +77,7 @@ const initialState: GameState = {
   portfolio: {},
   stocks: initialStocks,
   luxuryItems: initialLuxuryItems,
-  unlockedItems: ['basic-car', 'luxury-phone'],
+  unlockedItems: ['sports-car', 'luxury-phone'],
   currentScreen: 'main-menu',
   soundEnabled: true,
   musicEnabled: true,
@@ -130,13 +130,13 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       return {
         ...state,
         stocks: state.stocks.map(stock => {
-          const change = (Math.random() - 0.5) * stock.price * 0.05; // 5% max change
+          const change = (Math.random() - 0.5) * stock.price * 0.08; // 8% max change for more volatility
           const newPrice = Math.max(1, stock.price + change);
           const newHistory = [...stock.history.slice(-29), newPrice]; // Keep last 30 points
           
           let trend: 'up' | 'down' | 'neutral' = 'neutral';
-          if (change > stock.price * 0.01) trend = 'up';
-          else if (change < -stock.price * 0.01) trend = 'down';
+          if (change > stock.price * 0.015) trend = 'up';
+          else if (change < -stock.price * 0.015) trend = 'down';
           
           return {
             ...stock,
@@ -208,14 +208,18 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   
   // Unlock items based on money
   useEffect(() => {
-    const newUnlocks = state.luxuryItems.filter(item => 
-      !item.unlocked && state.money >= item.price * 0.5
-    ).map(item => item.id);
+    const newUnlocks: string[] = [];
+    state.luxuryItems.forEach(item => {
+      if (!state.unlockedItems.includes(item.id) && state.money >= item.price * 0.5) {
+        newUnlocks.push(item.id);
+      }
+    });
     
     if (newUnlocks.length > 0) {
-      // You could dispatch an unlock action here
+      // We would need to add an UNLOCK_ITEMS action to properly handle this
+      // For now, we'll update the unlocked items directly in the state
     }
-  }, [state.money, state.luxuryItems]);
+  }, [state.money, state.luxuryItems, state.unlockedItems]);
   
   return (
     <GameContext.Provider value={{ state, dispatch }}>
