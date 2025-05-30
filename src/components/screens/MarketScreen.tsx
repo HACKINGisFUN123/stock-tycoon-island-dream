@@ -1,122 +1,112 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useGame } from '../../contexts/GameContext';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { ArrowLeft, TrendingUp, TrendingDown, Minus } from 'lucide-react';
-import StockChart from '../StockChart';
 
 const MarketScreen: React.FC = () => {
   const { state, dispatch } = useGame();
-  const [selectedStock, setSelectedStock] = useState<string | null>(null);
   
   const formatMoney = (amount: number) => {
-    if (amount >= 1000) return `$${(amount / 1000).toFixed(1)}K`;
+    if (amount >= 1000000) return `$${(amount / 1000000).toFixed(2)}M`;
+    if (amount >= 1000) return `$${(amount / 1000).toFixed(0)}K`;
     return `$${amount.toFixed(2)}`;
   };
   
-  const getPortfolioValue = (stockId: string) => {
-    const holding = state.portfolio[stockId];
-    const stock = state.stocks.find(s => s.id === stockId);
-    if (!holding || !stock) return 0;
-    return holding.shares * stock.price;
+  const getTotalPortfolioValue = () => {
+    return Object.entries(state.portfolio).reduce((total, [stockId, holding]) => {
+      const stock = state.stocks.find(s => s.id === stockId);
+      return total + (stock ? holding.shares * stock.price : 0);
+    }, 0);
   };
-  
-  const getTrendIcon = (trend: string) => {
-    switch (trend) {
-      case 'up':
-        return <TrendingUp className="w-4 h-4 text-green-500" />;
-      case 'down':
-        return <TrendingDown className="w-4 h-4 text-red-500" />;
-      default:
-        return <Minus className="w-4 h-4 text-gray-500" />;
-    }
-  };
-  
-  const getPriceChange = (stock: any) => {
+
+  const getStockPerformance = (stock: any) => {
     if (stock.history.length < 2) return 0;
     const current = stock.price;
     const previous = stock.history[stock.history.length - 2];
     return ((current - previous) / previous) * 100;
   };
   
-  if (selectedStock) {
-    dispatch({ type: 'CHANGE_SCREEN', screen: 'trading' });
-    return null;
-  }
-  
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4 overflow-hidden">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-4">
+      <div className="max-w-2xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <Button 
             onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'main-menu' })}
             variant="outline"
-            className="bg-slate-800 border-slate-600 text-white hover:bg-slate-700 transition-all duration-300 hover:scale-105"
+            className="bg-white/10 border-white/30 text-white hover:bg-white/20 transition-all duration-300 hover:scale-105 rounded-xl"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            חזרה
+            Back
           </Button>
           
           <div className="text-center flex-1">
-            <h1 className="text-2xl font-bold text-white">שוק המניות</h1>
-            <p className="text-gray-400">בחר מניה לסחר</p>
+            <h1 className="text-2xl font-bold text-white">Stock Market</h1>
+            <div className="text-white/80 text-sm">
+              Portfolio: {formatMoney(getTotalPortfolioValue())}
+            </div>
           </div>
         </div>
-        
-        <div className="grid gap-4">
+
+        <div className="space-y-4">
           {state.stocks.map((stock) => {
             const holding = state.portfolio[stock.id];
-            const priceChange = getPriceChange(stock);
-            const portfolioValue = getPortfolioValue(stock.id);
+            const performance = getStockPerformance(stock);
+            const isPositive = performance >= 0;
             
             return (
               <Card 
                 key={stock.id} 
-                className="bg-slate-800/50 backdrop-blur-md border-slate-600 hover:bg-slate-700/50 transition-all cursor-pointer hover:scale-[1.02] animate-fade-in"
-                onClick={() => {
-                  localStorage.setItem('selectedStockId', stock.id);
-                  dispatch({ type: 'CHANGE_SCREEN', screen: 'trading' });
-                }}
+                className="bg-slate-800/80 backdrop-blur-md border-slate-600 transition-all duration-300 hover:scale-105 hover:bg-slate-700/80 rounded-xl shadow-lg"
               >
                 <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="text-2xl">{stock.logo}</div>
-                      <div>
-                        <h3 className="text-lg font-semibold text-white">{stock.name}</h3>
-                        <p className="text-sm text-gray-400">{stock.symbol}</p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div>
+                          <h3 className="font-bold text-white text-lg">{stock.name}</h3>
+                          <p className="text-gray-400 text-sm">{stock.symbol}</p>
+                        </div>
                       </div>
+                      
+                      <div className="flex items-center gap-4">
+                        <div className="text-2xl font-bold text-white">
+                          {formatMoney(stock.price)}
+                        </div>
+                        
+                        <div className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${
+                          isPositive 
+                            ? 'bg-green-500/20 text-green-400' 
+                            : 'bg-red-500/20 text-red-400'
+                        }`}>
+                          {isPositive ? (
+                            <TrendingUp className="w-4 h-4" />
+                          ) : performance < 0 ? (
+                            <TrendingDown className="w-4 h-4" />
+                          ) : (
+                            <Minus className="w-4 h-4" />
+                          )}
+                          {performance > 0 ? '+' : ''}{performance.toFixed(2)}%
+                        </div>
+                      </div>
+                      
+                      {holding && (
+                        <div className="mt-2 text-sm text-gray-400">
+                          Owned: {holding.shares} shares • Value: {formatMoney(holding.shares * stock.price)}
+                        </div>
+                      )}
                     </div>
                     
-                    <div className="text-right">
-                      <div className="flex items-center gap-2">
-                        {getTrendIcon(stock.trend)}
-                        <span className="text-xl font-bold text-white">
-                          {formatMoney(stock.price)}
-                        </span>
-                      </div>
-                      <p className={`text-sm ${priceChange >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                        {priceChange >= 0 ? '+' : ''}{priceChange.toFixed(2)}%
-                      </p>
+                    <div className="ml-4">
+                      <Button
+                        onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'trading' })}
+                        className="bg-blue-600 hover:bg-blue-700 text-white transition-all duration-300 hover:scale-105 rounded-xl px-6 py-3 font-semibold"
+                      >
+                        Trade
+                      </Button>
                     </div>
                   </div>
-                  
-                  <div className="mb-3">
-                    <StockChart stock={stock} height={60} />
-                  </div>
-                  
-                  {holding && (
-                    <div className="border-t border-slate-600 pt-3">
-                      <div className="flex justify-between text-sm text-gray-300">
-                        <span>מניות: {holding.shares}</span>
-                        <span>ערך: {formatMoney(portfolioValue)}</span>
-                      </div>
-                      <div className="text-xs text-gray-400 mt-1">
-                        מחיר ממוצע: {formatMoney(holding.avgBuyPrice)}
-                      </div>
-                    </div>
-                  )}
                 </CardContent>
               </Card>
             );

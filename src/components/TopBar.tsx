@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useGame } from '../contexts/GameContext';
-import { DollarSign, Plus, Diamond } from 'lucide-react';
+import { DollarSign, Plus } from 'lucide-react';
 import { Button } from './ui/button';
 
 const TopBar: React.FC = () => {
@@ -32,12 +32,12 @@ const TopBar: React.FC = () => {
   return (
     <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-slate-700 px-4 py-3 shadow-2xl backdrop-blur-md">
       <div className="flex items-center justify-between max-w-4xl mx-auto">
+        {/* Money Display - Left Side */}
         <div className="flex items-center gap-3">
-          {/* Money Display */}
-          <div className="flex items-center gap-2 bg-slate-800/80 rounded-lg px-3 py-2 border border-slate-600">
+          <div className="flex items-center gap-2 bg-slate-800/80 rounded-xl px-4 py-2 border border-slate-600 shadow-lg">
             <div className="text-right">
-              <div className="flex items-center gap-1">
-                <DollarSign className="w-4 h-4 text-green-400" />
+              <div className="flex items-center gap-2">
+                <DollarSign className="w-5 h-5 text-green-400" />
                 <span className="text-green-400 font-bold text-lg">
                   {formatMoney(state.money)}
                 </span>
@@ -48,34 +48,32 @@ const TopBar: React.FC = () => {
             </div>
           </div>
 
-          {/* Money Shop Button */}
           <Button
             onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'money-shop' })}
             size="sm"
-            className="bg-green-500 hover:bg-green-600 text-white p-2 h-8 w-8 transition-all duration-200 hover:scale-105"
+            className="bg-green-500 hover:bg-green-600 text-white p-2 h-10 w-10 rounded-full transition-all duration-200 hover:scale-110 shadow-lg"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-5 h-5" />
           </Button>
         </div>
         
+        {/* Diamonds Display - Right Side */}
         <div className="flex items-center gap-3">
-          {/* Diamonds Display */}
-          <div className="flex items-center gap-2 bg-purple-800/80 rounded-lg px-3 py-2 border border-purple-600">
-            <div className="flex items-center gap-1">
-              <Diamond className="w-4 h-4 text-purple-300" />
+          <div className="flex items-center gap-2 bg-purple-800/80 rounded-xl px-4 py-2 border border-purple-600 shadow-lg">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">💎</span>
               <span className="text-purple-300 font-bold text-lg">
                 {formatDiamonds(state.diamonds)}
               </span>
             </div>
           </div>
 
-          {/* Diamond Shop Button */}
           <Button
             onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'money-shop' })}
             size="sm"
-            className="bg-purple-500 hover:bg-purple-600 text-white p-2 h-8 w-8 transition-all duration-200 hover:scale-105"
+            className="bg-purple-500 hover:bg-purple-600 text-white p-2 h-10 w-10 rounded-full transition-all duration-200 hover:scale-110 shadow-lg"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-5 h-5" />
           </Button>
         </div>
       </div>

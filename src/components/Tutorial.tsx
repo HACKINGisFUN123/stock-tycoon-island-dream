@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useGame } from '../contexts/GameContext';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
@@ -8,6 +8,14 @@ import { X, ArrowRight, ArrowLeft, TrendingUp, ShoppingBag, Package } from 'luci
 const Tutorial: React.FC = () => {
   const { dispatch } = useGame();
   const [currentStep, setCurrentStep] = useState(0);
+
+  // Disable scrolling when tutorial is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
 
   const tutorialSteps = [
     {
@@ -58,8 +66,8 @@ const Tutorial: React.FC = () => {
   const step = tutorialSteps[currentStep];
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 animate-fade-in">
-      <Card className="bg-slate-800 border-slate-600 max-w-md w-full animate-scale-in">
+    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 animate-fade-in">
+      <Card className="bg-slate-800 border-slate-600 max-w-md w-full animate-scale-in rounded-xl shadow-2xl">
         <CardHeader className="text-center">
           <div className="flex items-center justify-between">
             <div className="w-6"></div>
@@ -67,7 +75,7 @@ const Tutorial: React.FC = () => {
               <div className="transition-all duration-300 ease-in-out">
                 {step.icon}
               </div>
-              <CardTitle className="text-white mt-2">{step.title}</CardTitle>
+              <CardTitle className="text-white mt-2 text-xl">{step.title}</CardTitle>
             </div>
             <Button
               onClick={closeTutorial}
@@ -79,28 +87,28 @@ const Tutorial: React.FC = () => {
           </div>
         </CardHeader>
         <CardContent className="text-center">
-          <p className="text-gray-300 mb-6 leading-relaxed">
+          <p className="text-gray-300 mb-6 leading-relaxed text-lg">
             {step.content}
           </p>
           
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-6">
             <Button
               onClick={prevStep}
               variant="outline"
-              className="bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
+              className="bg-slate-700 border-slate-600 text-white hover:bg-slate-600 rounded-xl"
               disabled={currentStep === 0}
             >
               <ArrowLeft className="w-4 h-4 mr-1" />
               Back
             </Button>
             
-            <div className="text-sm text-gray-400">
+            <div className="text-sm text-gray-400 font-medium">
               Step {currentStep + 1} of {tutorialSteps.length}
             </div>
             
             <Button
               onClick={nextStep}
-              className="bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+              className="bg-blue-600 hover:bg-blue-700 text-white transition-colors rounded-xl"
             >
               {currentStep < tutorialSteps.length - 1 ? (
                 <>
@@ -112,11 +120,11 @@ const Tutorial: React.FC = () => {
             </Button>
           </div>
           
-          <div className="flex gap-1 justify-center mt-4">
+          <div className="flex gap-2 justify-center">
             {tutorialSteps.map((_, index) => (
               <div
                 key={index}
-                className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                className={`w-3 h-3 rounded-full transition-colors duration-300 ${
                   index === currentStep ? 'bg-blue-400' : 'bg-gray-600'
                 }`}
               />

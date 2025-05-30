@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
 export interface Stock {
@@ -133,58 +132,58 @@ const initialStocks: Stock[] = [
 const generateLuxuryItems = (): LuxuryItem[] => {
   const items: LuxuryItem[] = [];
   
-  // Cars (25 items)
+  // Cars (20 items)
   const cars = [
-    { name: 'פורש 911 טורבו', description: 'מכונית ספורט יוקרתית', price: 200000, diamondPrice: 800 },
-    { name: 'למבורגיני הוראקאן', description: 'סופר קאר איטלקי', price: 350000, diamondPrice: 1400 },
-    { name: 'פרארי 488 GTB', description: 'מכונית מירוץ איטלקית', price: 500000, diamondPrice: 2000 },
-    { name: 'מקלארן 720S', description: 'סופר קאר בריטי', price: 750000, diamondPrice: 3000 },
-    { name: 'בוגאטי שירון', description: 'ההיפר קאר הכי מהיר', price: 3000000, diamondPrice: 12000 },
-    { name: 'רולס רויס פנטום', description: 'יוקרה בריטית', price: 600000, diamondPrice: 2400 },
-    { name: 'בנטלי קונטיננטל GT', description: 'יוקרה וביצועים', price: 300000, diamondPrice: 1200 },
-    { name: 'אסטון מרטין DB11', description: 'אלגנטיות בריטית', price: 400000, diamondPrice: 1600 },
-    { name: 'מרצדס AMG GT63', description: 'ביצועים גרמניים', price: 250000, diamondPrice: 1000 },
-    { name: 'BMW M8 קופה', description: 'מכונית ספורט גרמנית', price: 180000, diamondPrice: 720 },
-    { name: 'אאודי RS7', description: 'ספורט וויגן גרמני', price: 170000, diamondPrice: 680 },
-    { name: 'יגואר F-Type', description: 'ספורט בריטי קלאסי', price: 120000, diamondPrice: 480 },
-    { name: 'קורבט Z06', description: 'אמריקאי אגדי', price: 140000, diamondPrice: 560 },
-    { name: 'גט ר35', description: 'יפני מהיר', price: 160000, diamondPrice: 640 },
-    { name: 'פורש טיקאן', description: 'חשמלי יוקרתי', price: 190000, diamondPrice: 760 },
-    { name: 'מזראטי MC20', description: 'איטלקי מרהיב', price: 280000, diamondPrice: 1120 },
-    { name: 'לוטוס אמירה', description: 'בריטי קל משקל', price: 150000, diamondPrice: 600 },
-    { name: 'מקלארן 540C', description: 'סופר קאר נגיש', price: 220000, diamondPrice: 880 },
-    { name: 'פורש 718 קיימן', description: 'ספורט מושלם', price: 110000, diamondPrice: 440 },
-    { name: 'BMW i8', description: 'היברידי עתידני', price: 160000, diamondPrice: 640 }
+    { name: 'Porsche 911 Turbo', description: 'Luxury sports car', price: 200000, diamondPrice: 800 },
+    { name: 'Lamborghini Huracan', description: 'Italian supercar', price: 350000, diamondPrice: 1400 },
+    { name: 'Ferrari 488 GTB', description: 'Italian racing machine', price: 500000, diamondPrice: 2000 },
+    { name: 'McLaren 720S', description: 'British supercar', price: 750000, diamondPrice: 3000 },
+    { name: 'Bugatti Chiron', description: 'The fastest hypercar', price: 3000000, diamondPrice: 12000 },
+    { name: 'Rolls Royce Phantom', description: 'British luxury', price: 600000, diamondPrice: 2400 },
+    { name: 'Bentley Continental GT', description: 'Luxury and performance', price: 300000, diamondPrice: 1200 },
+    { name: 'Aston Martin DB11', description: 'British elegance', price: 400000, diamondPrice: 1600 },
+    { name: 'Mercedes AMG GT63', description: 'German performance', price: 250000, diamondPrice: 1000 },
+    { name: 'BMW M8 Coupe', description: 'German sports car', price: 180000, diamondPrice: 720 },
+    { name: 'Audi RS7', description: 'German sport wagon', price: 170000, diamondPrice: 680 },
+    { name: 'Jaguar F-Type', description: 'Classic British sports', price: 120000, diamondPrice: 480 },
+    { name: 'Corvette Z06', description: 'American legend', price: 140000, diamondPrice: 560 },
+    { name: 'Nissan GT-R', description: 'Japanese speedster', price: 160000, diamondPrice: 640 },
+    { name: 'Porsche Taycan', description: 'Luxury electric', price: 190000, diamondPrice: 760 },
+    { name: 'Maserati MC20', description: 'Italian masterpiece', price: 280000, diamondPrice: 1120 },
+    { name: 'Lotus Emira', description: 'British lightweight', price: 150000, diamondPrice: 600 },
+    { name: 'McLaren 540C', description: 'Accessible supercar', price: 220000, diamondPrice: 880 },
+    { name: 'Porsche 718 Cayman', description: 'Perfect sports car', price: 110000, diamondPrice: 440 },
+    { name: 'BMW i8', description: 'Futuristic hybrid', price: 160000, diamondPrice: 640 }
   ];
 
-  // Houses (25 items)
+  // Houses (20 items)
   const houses = [
-    { name: 'וילה במליבו', description: 'נוף לאוקיינוס השקט', price: 5000000, diamondPrice: 20000 },
-    { name: 'פנטהאוז במנהטן', description: 'נוף לסנטרל פארק', price: 15000000, diamondPrice: 60000 },
-    { name: 'טירה בצרפת', description: 'טירה היסטורית', price: 25000000, diamondPrice: 100000 },
-    { name: 'וילה בהמפטונס', description: 'נופש קיצי יוקרתי', price: 8000000, diamondPrice: 32000 },
-    { name: 'בית בביברלי הילס', description: 'שכונת הסלבריטאים', price: 12000000, diamondPrice: 48000 },
-    { name: 'פנטהאוז בדובאי', description: 'יוקרה במזרח התיכון', price: 10000000, diamondPrice: 40000 },
-    { name: 'וילה בטוסקנה', description: 'כפרי איטלקי', price: 6000000, diamondPrice: 24000 },
-    { name: 'דירה בלונדון', description: 'מיקום מרכזי', price: 7000000, diamondPrice: 28000 },
-    { name: 'בית בזכוכית מיאמי', description: 'מודרני על החוף', price: 9000000, diamondPrice: 36000 },
-    { name: 'וילה בקוטדז׳ור', description: 'נוף לים התיכון', price: 11000000, diamondPrice: 44000 },
-    { name: 'פנטהאוז בטוקיו', description: 'טכנולוגיה יפנית', price: 8500000, diamondPrice: 34000 },
-    { name: 'וילה בהוואי', description: 'גן עדן טרופי', price: 7500000, diamondPrice: 30000 },
-    { name: 'בית בצ׳לסי', description: 'אזור אמנותי', price: 13000000, diamondPrice: 52000 },
-    { name: 'וילה בסן טרופז', description: 'יוקרה צרפתית', price: 14000000, diamondPrice: 56000 },
-    { name: 'פנטהאוז במונקו', description: 'מרכז ההימורים', price: 16000000, diamondPrice: 64000 },
-    { name: 'וילה בסנטוריני', description: 'יווני קלאסי', price: 4500000, diamondPrice: 18000 },
-    { name: 'בית באספן', description: 'סקי וטבע', price: 6500000, diamondPrice: 26000 },
-    { name: 'וילה בברבדוס', description: 'קריבי יוקרתי', price: 5500000, diamondPrice: 22000 },
-    { name: 'פנטהאוז בסידני', description: 'נוף לנמל', price: 9500000, diamondPrice: 38000 },
-    { name: 'וילה בקיפוס', description: 'ים תיכוני', price: 3500000, diamondPrice: 14000 }
+    { name: 'Malibu Villa', description: 'Pacific Ocean view', price: 5000000, diamondPrice: 20000 },
+    { name: 'Manhattan Penthouse', description: 'Central Park view', price: 15000000, diamondPrice: 60000 },
+    { name: 'French Chateau', description: 'Historic castle', price: 25000000, diamondPrice: 100000 },
+    { name: 'Hamptons Villa', description: 'Luxury summer retreat', price: 8000000, diamondPrice: 32000 },
+    { name: 'Beverly Hills Mansion', description: 'Celebrity neighborhood', price: 12000000, diamondPrice: 48000 },
+    { name: 'Dubai Penthouse', description: 'Middle Eastern luxury', price: 10000000, diamondPrice: 40000 },
+    { name: 'Tuscany Villa', description: 'Italian countryside', price: 6000000, diamondPrice: 24000 },
+    { name: 'London Apartment', description: 'Central location', price: 7000000, diamondPrice: 28000 },
+    { name: 'Miami Glass House', description: 'Modern beachfront', price: 9000000, diamondPrice: 36000 },
+    { name: 'French Riviera Villa', description: 'Mediterranean views', price: 11000000, diamondPrice: 44000 },
+    { name: 'Tokyo Penthouse', description: 'Japanese technology', price: 8500000, diamondPrice: 34000 },
+    { name: 'Hawaii Villa', description: 'Tropical paradise', price: 7500000, diamondPrice: 30000 },
+    { name: 'Chelsea Townhouse', description: 'Artistic district', price: 13000000, diamondPrice: 52000 },
+    { name: 'Saint-Tropez Villa', description: 'French luxury', price: 14000000, diamondPrice: 56000 },
+    { name: 'Monaco Penthouse', description: 'Casino central', price: 16000000, diamondPrice: 64000 },
+    { name: 'Santorini Villa', description: 'Greek classic', price: 4500000, diamondPrice: 18000 },
+    { name: 'Aspen Chalet', description: 'Ski and nature', price: 6500000, diamondPrice: 26000 },
+    { name: 'Barbados Villa', description: 'Caribbean luxury', price: 5500000, diamondPrice: 22000 },
+    { name: 'Sydney Penthouse', description: 'Harbor views', price: 9500000, diamondPrice: 38000 },
+    { name: 'Cyprus Villa', description: 'Mediterranean island', price: 3500000, diamondPrice: 14000 }
   ];
 
   // Add all items with proper categorization
   let id = 1;
   
-  [...cars.slice(0, 20), ...houses.slice(0, 20)].forEach((item, index) => {
+  [...cars, ...houses].forEach((item, index) => {
     let category: 'car' | 'house' = 'car';
     if (index >= 20) category = 'house';
     
@@ -209,23 +208,35 @@ const updateStockPrices = (stocks: Stock[]): Stock[] => {
   return stocks.map(stock => {
     const volatility = stock.volatility || 0.02;
     
-    // Enhanced bias towards positive movement (70% chance of going up)
+    // More balanced approach - 60% chance of going up, 40% chance of going down
     const trend = Math.random();
     let change;
     
-    if (trend < 0.7) {
-      // Positive movement (70% chance)
-      change = Math.random() * volatility * 1.2;
-    } else if (trend < 0.9) {
-      // Small negative movement (20% chance)
-      change = -Math.random() * volatility * 0.3;
+    if (trend < 0.6) {
+      // Positive movement (60% chance) - moderate gains
+      change = Math.random() * volatility * 0.8;
     } else {
-      // Larger negative movement (10% chance)
-      change = -Math.random() * volatility * 0.8;
+      // Negative movement (40% chance) - smaller losses
+      change = -Math.random() * volatility * 0.5;
     }
     
     // Prevent stock from going below $1
     const newPrice = Math.max(1, stock.price * (1 + change));
+    
+    // Cap gains at 2x original price, then introduce losses
+    const originalPrice = stock.history[0];
+    if (newPrice > originalPrice * 2) {
+      // Force a small decline when hitting 2x
+      const declineChange = -Math.random() * volatility * 0.3;
+      const adjustedPrice = Math.max(originalPrice * 1.8, stock.price * (1 + declineChange));
+      
+      return {
+        ...stock,
+        price: adjustedPrice,
+        trend: 'down' as const,
+        history: [...stock.history.slice(-29), adjustedPrice]
+      };
+    }
     
     // Determine trend based on price movement
     let newTrend: 'up' | 'down' | 'neutral' = 'neutral';
