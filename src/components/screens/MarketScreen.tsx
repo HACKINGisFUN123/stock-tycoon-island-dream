@@ -46,13 +46,13 @@ const MarketScreen: React.FC = () => {
   }
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4 overflow-hidden">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <Button 
             onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'main-menu' })}
             variant="outline"
-            className="bg-slate-800 border-slate-600 text-white hover:bg-slate-700"
+            className="bg-slate-800 border-slate-600 text-white hover:bg-slate-700 transition-all duration-300 hover:scale-105"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
@@ -75,7 +75,7 @@ const MarketScreen: React.FC = () => {
             return (
               <Card 
                 key={stock.id} 
-                className="bg-slate-800/50 backdrop-blur-md border-slate-600 hover:bg-slate-700/50 transition-all cursor-pointer hover:scale-[1.02]"
+                className="bg-slate-800/50 backdrop-blur-md border-slate-600 hover:bg-slate-700/50 transition-all cursor-pointer hover:scale-[1.02] animate-fade-in"
                 onClick={() => {
                   localStorage.setItem('selectedStockId', stock.id);
                   dispatch({ type: 'CHANGE_SCREEN', screen: 'trading' });
@@ -83,9 +83,12 @@ const MarketScreen: React.FC = () => {
               >
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-3">
-                    <div>
-                      <h3 className="text-lg font-semibold text-white">{stock.name}</h3>
-                      <p className="text-sm text-gray-400">{stock.symbol}</p>
+                    <div className="flex items-center gap-3">
+                      <div className="text-2xl">{stock.logo}</div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-white">{stock.name}</h3>
+                        <p className="text-sm text-gray-400">{stock.symbol}</p>
+                      </div>
                     </div>
                     
                     <div className="text-right">

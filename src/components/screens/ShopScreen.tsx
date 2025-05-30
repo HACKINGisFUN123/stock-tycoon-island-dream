@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useGame } from '../../contexts/GameContext';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { ArrowLeft, Lock, CheckCircle, ShoppingCart, Car, Home, Plane, Smartphone, ChevronUp } from 'lucide-react';
+import { ArrowLeft, Lock, CheckCircle, ShoppingCart, Car, Home, Plane, Smartphone, ChevronUp, Diamond, DollarSign, Crown, Gem, Shirt, Globe } from 'lucide-react';
 
 const ShopScreen: React.FC = () => {
   const { state, dispatch } = useGame();
@@ -15,8 +15,8 @@ const ShopScreen: React.FC = () => {
     return `$${amount.toFixed(0)}`;
   };
   
-  const handlePurchase = (itemId: string) => {
-    dispatch({ type: 'BUY_LUXURY_ITEM', itemId });
+  const handlePurchase = (itemId: string, currency: 'money' | 'diamonds') => {
+    dispatch({ type: 'BUY_LUXURY_ITEM', itemId, currency });
   };
 
   const scrollToTop = () => {
@@ -24,12 +24,15 @@ const ShopScreen: React.FC = () => {
   };
   
   const categories = [
-    { id: 'all', name: 'All Items', icon: ShoppingCart },
-    { id: 'car', name: 'Vehicles', icon: Car },
-    { id: 'house', name: 'Real Estate', icon: Home },
-    { id: 'yacht', name: 'Yachts', icon: Plane },
-    { id: 'jet', name: 'Aircraft', icon: Plane },
-    { id: 'gadget', name: 'Tech', icon: Smartphone },
+    { id: 'all', name: 'All Items', icon: ShoppingCart, color: 'from-blue-500 to-purple-500' },
+    { id: 'car', name: 'Cars', icon: Car, color: 'from-red-500 to-orange-500' },
+    { id: 'house', name: 'Real Estate', icon: Home, color: 'from-green-500 to-emerald-500' },
+    { id: 'yacht', name: 'Yachts', icon: Plane, color: 'from-blue-500 to-cyan-500' },
+    { id: 'jet', name: 'Aircraft', icon: Plane, color: 'from-gray-500 to-slate-500' },
+    { id: 'accessories', name: 'Accessories', icon: Smartphone, color: 'from-purple-500 to-pink-500' },
+    { id: 'jewelry', name: 'Jewelry', icon: Gem, color: 'from-yellow-500 to-amber-500' },
+    { id: 'fashion', name: 'Fashion', icon: Shirt, color: 'from-pink-500 to-rose-500' },
+    { id: 'countries', name: 'Locations', icon: Globe, color: 'from-indigo-500 to-blue-500' },
   ];
 
   // Auto-unlock items based on money
@@ -51,7 +54,7 @@ const ShopScreen: React.FC = () => {
     : state.luxuryItems.filter(item => item.category === selectedCategory);
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-slate-900 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-slate-900 p-4 overflow-hidden">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <Button 
@@ -65,28 +68,37 @@ const ShopScreen: React.FC = () => {
           
           <div className="text-center">
             <h1 className="text-2xl font-bold text-white">Luxury Shop</h1>
-            <p className="text-white/80">Cash: {formatMoney(state.money)}</p>
+            <div className="flex items-center gap-4 text-white/80 text-sm">
+              <div className="flex items-center gap-1">
+                <DollarSign className="w-4 h-4 text-green-400" />
+                {formatMoney(state.money)}
+              </div>
+              <div className="flex items-center gap-1">
+                <Diamond className="w-4 h-4 text-purple-400" />
+                {state.diamonds}
+              </div>
+            </div>
           </div>
           
           <div className="w-20" />
         </div>
 
-        {/* Category Filter */}
-        <div className="flex flex-wrap gap-2 mb-6 justify-center">
+        {/* Enhanced Category Filter */}
+        <div className="grid grid-cols-3 md:grid-cols-5 gap-2 mb-6">
           {categories.map((category) => {
             const Icon = category.icon;
             return (
               <Button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`transition-all duration-300 hover:scale-105 ${
+                className={`relative overflow-hidden transition-all duration-300 hover:scale-105 p-3 h-auto flex flex-col items-center gap-2 ${
                   selectedCategory === category.id
-                    ? 'bg-purple-600 hover:bg-purple-700 text-white'
+                    ? `bg-gradient-to-r ${category.color} text-white shadow-lg`
                     : 'bg-white/10 hover:bg-white/20 text-white border border-white/30'
                 }`}
               >
-                <Icon className="w-4 h-4 mr-2" />
-                {category.name}
+                <Icon className="w-5 h-5" />
+                <span className="text-xs font-medium">{category.name}</span>
               </Button>
             );
           })}
@@ -94,7 +106,8 @@ const ShopScreen: React.FC = () => {
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           {filteredItems.map((item) => {
-            const canAfford = state.money >= item.price;
+            const canAffordMoney = state.money >= item.price;
+            const canAffordDiamonds = state.diamonds >= item.diamondPrice;
             const isUnlocked = state.unlockedItems.includes(item.id) || item.unlocked;
             
             return (
@@ -102,12 +115,10 @@ const ShopScreen: React.FC = () => {
                 key={item.id} 
                 className={`backdrop-blur-md border-white/20 relative overflow-hidden transition-all duration-300 hover:scale-105 ${
                   item.owned 
-                    ? 'bg-green-500/20 border-green-400/30' 
+                    ? 'bg-gradient-to-br from-green-500/20 to-emerald-500/20 border-green-400/30' 
                     : !isUnlocked 
                     ? 'bg-gray-500/20 border-gray-400/30'
-                    : canAfford 
-                    ? 'bg-white/10 hover:bg-white/15' 
-                    : 'bg-red-500/20 border-red-400/30'
+                    : 'bg-white/10 hover:bg-white/15' 
                 }`}
               >
                 <CardContent className="p-4">
@@ -137,46 +148,55 @@ const ShopScreen: React.FC = () => {
                     <p className="text-sm text-white/70">{item.description}</p>
                   </div>
                   
-                  <div className="text-center mb-4">
-                    <div className="text-2xl font-bold text-yellow-400">
-                      {formatMoney(item.price)}
-                    </div>
-                    {!isUnlocked && (
-                      <div className="text-xs text-white/60 mt-1">
-                        Unlock at {formatMoney(item.price * 0.5)}
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center justify-between p-2 bg-black/20 rounded">
+                      <div className="flex items-center gap-1">
+                        <DollarSign className="w-4 h-4 text-green-400" />
+                        <span className="text-green-400 font-bold">{formatMoney(item.price)}</span>
                       </div>
-                    )}
+                      {!item.owned && isUnlocked && (
+                        <Button
+                          onClick={() => handlePurchase(item.id, 'money')}
+                          disabled={!canAffordMoney}
+                          size="sm"
+                          className={`${canAffordMoney ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-500'} text-white`}
+                        >
+                          Buy
+                        </Button>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-2 bg-black/20 rounded">
+                      <div className="flex items-center gap-1">
+                        <Diamond className="w-4 h-4 text-purple-400" />
+                        <span className="text-purple-400 font-bold">{item.diamondPrice}</span>
+                      </div>
+                      {!item.owned && isUnlocked && (
+                        <Button
+                          onClick={() => handlePurchase(item.id, 'diamonds')}
+                          disabled={!canAffordDiamonds}
+                          size="sm"
+                          className={`${canAffordDiamonds ? 'bg-purple-500 hover:bg-purple-600' : 'bg-gray-500'} text-white`}
+                        >
+                          Buy
+                        </Button>
+                      )}
+                    </div>
                   </div>
                   
-                  {item.owned ? (
-                    <Button 
-                      disabled 
-                      className="w-full bg-green-500 text-white"
-                    >
-                      <CheckCircle className="w-4 h-4 mr-2" />
-                      Owned
-                    </Button>
-                  ) : !isUnlocked ? (
-                    <Button 
-                      disabled 
-                      className="w-full bg-gray-500 text-white"
-                    >
-                      <Lock className="w-4 h-4 mr-2" />
-                      Locked
-                    </Button>
-                  ) : (
-                    <Button 
-                      onClick={() => handlePurchase(item.id)}
-                      disabled={!canAfford}
-                      className={`w-full transition-all duration-300 hover:scale-105 ${
-                        canAfford 
-                          ? 'bg-purple-500 hover:bg-purple-600 text-white' 
-                          : 'bg-gray-500 text-white cursor-not-allowed'
-                      }`}
-                    >
-                      <ShoppingCart className="w-4 h-4 mr-2" />
-                      {canAfford ? 'Buy Now' : 'Insufficient Funds'}
-                    </Button>
+                  {!isUnlocked && (
+                    <div className="text-xs text-white/60 text-center">
+                      Unlock at {formatMoney(item.price * 0.5)}
+                    </div>
+                  )}
+                  
+                  {item.owned && (
+                    <div className="text-center">
+                      <div className="flex items-center justify-center gap-2 text-green-400 font-semibold">
+                        <CheckCircle className="w-5 h-5" />
+                        Owned
+                      </div>
+                    </div>
                   )}
                 </CardContent>
               </Card>
@@ -193,16 +213,6 @@ const ShopScreen: React.FC = () => {
             <ChevronUp className="w-6 h-6" />
           </Button>
         </div>
-        
-        <Card className="bg-blue-500/20 backdrop-blur-md border-blue-400/30 mt-8">
-          <CardContent className="p-6 text-center">
-            <div className="text-4xl mb-4">💡</div>
-            <h3 className="text-lg font-semibold text-white mb-2">Unlock More Items</h3>
-            <p className="text-white/70">
-              Grow your wealth to unlock more luxury items! Items become available when you can afford half their price.
-            </p>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

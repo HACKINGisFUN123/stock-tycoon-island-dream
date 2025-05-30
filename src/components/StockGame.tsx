@@ -41,9 +41,9 @@ const GameRouter: React.FC = () => {
   const showTopBar = state.currentScreen !== 'main-menu';
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden">
       {showTopBar && <TopBar />}
-      <div className={showTopBar ? 'pt-20' : ''}>
+      <div className={`transition-all duration-300 ${showTopBar ? 'pt-20' : ''}`}>
         {renderScreen()}
       </div>
       {!state.tutorialCompleted && <Tutorial />}
