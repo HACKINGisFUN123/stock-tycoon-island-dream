@@ -53,7 +53,9 @@ type GameAction =
   | { type: 'CLAIM_DAILY_REWARD' }
   | { type: 'ADD_MONEY'; amount: number }
   | { type: 'RESET_GAME' }
-  | { type: 'COMPLETE_TUTORIAL' };
+  | { type: 'COMPLETE_TUTORIAL' }
+  | { type: 'RESTART_TUTORIAL' }
+  | { type: 'UNLOCK_ITEM'; itemId: string };
 
 const initialStocks: Stock[] = [
   // Tech Giants
@@ -235,37 +237,37 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       return {
         ...state,
         stocks: state.stocks.map(stock => {
-          // Improved stock movement - more balanced and player-friendly
+          // More player-friendly stock movement with positive bias
           const volatility = Math.random();
           let changePercent = 0;
           
-          // 70% chance of small movement (-2% to +2%)
-          if (volatility < 0.7) {
-            changePercent = (Math.random() - 0.5) * 0.04;
+          // 75% chance of small positive movement (0% to +3%)
+          if (volatility < 0.75) {
+            changePercent = Math.random() * 0.03;
           }
-          // 20% chance of medium movement (-5% to +5%)
+          // 15% chance of small negative movement (-2% to 0%)
           else if (volatility < 0.9) {
-            changePercent = (Math.random() - 0.5) * 0.1;
+            changePercent = -Math.random() * 0.02;
           }
-          // 8% chance of big movement (-10% to +10%)
-          else if (volatility < 0.98) {
-            changePercent = (Math.random() - 0.5) * 0.2;
+          // 7% chance of medium movement (-4% to +6%)
+          else if (volatility < 0.97) {
+            changePercent = (Math.random() - 0.3) * 0.1;
           }
-          // 2% chance of major movement (-15% to +15%)
+          // 3% chance of big movement (-8% to +12%)
           else {
-            changePercent = (Math.random() - 0.5) * 0.3;
+            changePercent = (Math.random() - 0.2) * 0.2;
           }
           
-          // Add slight positive bias to make earning money more achievable
-          changePercent += 0.001;
+          // Additional positive bias for earning money
+          changePercent += 0.002;
           
           const change = stock.price * changePercent;
           const newPrice = Math.max(1, stock.price + change);
           const newHistory = [...stock.history.slice(-29), newPrice];
           
           let trend: 'up' | 'down' | 'neutral' = 'neutral';
-          if (changePercent > 0.015) trend = 'up';
-          else if (changePercent < -0.015) trend = 'down';
+          if (changePercent > 0.01) trend = 'up';
+          else if (changePercent < -0.01) trend = 'down';
           
           return {
             ...stock,
@@ -315,6 +317,19 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     
     case 'COMPLETE_TUTORIAL':
       return { ...state, tutorialCompleted: true };
+    
+    case 'RESTART_TUTORIAL':
+      return { ...state, tutorialCompleted: false };
+    
+    case 'UNLOCK_ITEM': {
+      const itemId = (action as any).itemId;
+      return {
+        ...state,
+        unlockedItems: state.unlockedItems.includes(itemId) 
+          ? state.unlockedItems 
+          : [...state.unlockedItems, itemId]
+      };
+    }
     
     default:
       return state;

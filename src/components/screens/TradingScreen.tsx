@@ -12,6 +12,7 @@ const TradingScreen: React.FC = () => {
   const [selectedStockId, setSelectedStockId] = useState<string | null>(null);
   const [buyShares, setBuyShares] = useState<number>(1);
   const [sellShares, setSellShares] = useState<number>(1);
+  const [activeTab, setActiveTab] = useState<'buy' | 'sell'>('buy');
   
   useEffect(() => {
     const stockId = localStorage.getItem('selectedStockId');
@@ -94,7 +95,7 @@ const TradingScreen: React.FC = () => {
               dispatch({ type: 'CHANGE_SCREEN', screen: 'market' });
             }}
             variant="outline"
-            className="bg-slate-800 border-slate-600 text-white hover:bg-slate-700"
+            className="bg-slate-800 border-slate-600 text-white hover:bg-slate-700 transition-all duration-300 hover:scale-105"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
@@ -158,12 +159,35 @@ const TradingScreen: React.FC = () => {
           </Card>
         )}
         
-        <div className="grid md:grid-cols-2 gap-4">
-          <Card className="bg-green-500/20 backdrop-blur-md border-green-400/30">
-            <CardHeader>
-              <CardTitle className="text-green-400">Buy Shares</CardTitle>
-            </CardHeader>
-            <CardContent>
+        {/* Compact Trading Section */}
+        <Card className="bg-slate-800/50 backdrop-blur-md border-slate-600">
+          <CardHeader>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => setActiveTab('buy')}
+                className={`flex-1 transition-all duration-300 ${
+                  activeTab === 'buy'
+                    ? 'bg-green-500 hover:bg-green-600 text-white'
+                    : 'bg-slate-700 hover:bg-slate-600 text-white'
+                }`}
+              >
+                Buy Shares
+              </Button>
+              <Button
+                onClick={() => setActiveTab('sell')}
+                className={`flex-1 transition-all duration-300 ${
+                  activeTab === 'sell'
+                    ? 'bg-red-500 hover:bg-red-600 text-white'
+                    : 'bg-slate-700 hover:bg-slate-600 text-white'
+                }`}
+                disabled={!holding}
+              >
+                Sell Shares
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {activeTab === 'buy' ? (
               <TradingControls
                 shares={buyShares}
                 maxShares={maxBuyShares}
@@ -174,14 +198,7 @@ const TradingScreen: React.FC = () => {
                 totalCost={buyShares * stock.price}
                 formatMoney={formatMoney}
               />
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-red-500/20 backdrop-blur-md border-red-400/30">
-            <CardHeader>
-              <CardTitle className="text-red-400">Sell Shares</CardTitle>
-            </CardHeader>
-            <CardContent>
+            ) : (
               <TradingControls
                 shares={sellShares}
                 maxShares={maxSellShares}
@@ -193,9 +210,9 @@ const TradingScreen: React.FC = () => {
                 formatMoney={formatMoney}
                 disabled={!holding}
               />
-            </CardContent>
-          </Card>
-        </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

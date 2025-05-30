@@ -34,7 +34,8 @@ const TradingControls: React.FC<TradingControlsProps> = ({
     onSharesChange(maxShares);
   };
 
-  const quickIncrements = [5, 10, 25];
+  const positiveIncrements = [5, 10, 25];
+  const negativeIncrements = [5, 10, 15];
 
   return (
     <div className="space-y-4">
@@ -46,32 +47,46 @@ const TradingControls: React.FC<TradingControlsProps> = ({
           <Button
             onClick={() => adjustShares(-1)}
             disabled={shares <= 1 || disabled}
-            className="w-12 h-12 bg-slate-600 hover:bg-slate-700 text-white p-0 rounded-full"
+            className="w-12 h-12 bg-slate-600 hover:bg-slate-700 text-white p-0 rounded-full transition-all duration-200 hover:scale-105"
           >
             <Minus className="w-5 h-5" />
           </Button>
           
-          <div className="bg-slate-800 border border-slate-600 rounded-lg px-6 py-3 text-white text-2xl font-bold min-w-[100px] text-center">
+          <div className="bg-slate-800 border border-slate-600 rounded-lg px-6 py-3 text-white text-2xl font-bold min-w-[100px] text-center transition-all duration-200">
             {disabled ? 0 : shares}
           </div>
           
           <Button
             onClick={() => adjustShares(1)}
             disabled={shares >= maxShares || disabled}
-            className="w-12 h-12 bg-slate-600 hover:bg-slate-700 text-white p-0 rounded-full"
+            className="w-12 h-12 bg-slate-600 hover:bg-slate-700 text-white p-0 rounded-full transition-all duration-200 hover:scale-105"
           >
             <Plus className="w-5 h-5" />
           </Button>
         </div>
 
-        {/* Quick increment buttons */}
+        {/* Negative increment buttons */}
+        <div className="flex items-center justify-center gap-2 mb-2">
+          {negativeIncrements.map((decrement) => (
+            <Button
+              key={decrement}
+              onClick={() => adjustShares(-decrement)}
+              disabled={shares - decrement < 1 || disabled}
+              className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1 h-8 transition-all duration-200 hover:scale-105"
+            >
+              -{decrement}
+            </Button>
+          ))}
+        </div>
+
+        {/* Positive increment buttons */}
         <div className="flex items-center justify-center gap-2 mb-3">
-          {quickIncrements.map((increment) => (
+          {positiveIncrements.map((increment) => (
             <Button
               key={increment}
               onClick={() => adjustShares(increment)}
               disabled={shares + increment > maxShares || disabled}
-              className="bg-slate-700 hover:bg-slate-600 text-white text-sm px-3 py-1 h-8"
+              className="bg-green-600 hover:bg-green-700 text-white text-sm px-3 py-1 h-8 transition-all duration-200 hover:scale-105"
             >
               +{increment}
             </Button>
@@ -80,7 +95,7 @@ const TradingControls: React.FC<TradingControlsProps> = ({
           <Button
             onClick={setToMax}
             disabled={maxShares === 0 || disabled}
-            className="bg-slate-700 hover:bg-slate-600 text-white text-sm px-3 py-1 h-8 font-semibold"
+            className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 h-8 font-semibold transition-all duration-200 hover:scale-105"
           >
             MAX
           </Button>
@@ -93,7 +108,7 @@ const TradingControls: React.FC<TradingControlsProps> = ({
       
       <Button 
         onClick={onAction}
-        className={`w-full ${actionColor} text-white font-semibold py-4 text-lg`}
+        className={`w-full ${actionColor} text-white font-semibold py-4 text-lg transition-all duration-200 hover:scale-105`}
         disabled={disabled || shares <= 0 || shares > maxShares || maxShares === 0}
       >
         {actionLabel} {disabled ? 0 : shares} Share{shares !== 1 ? 's' : ''}

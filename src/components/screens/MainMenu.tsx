@@ -22,21 +22,25 @@ const MainMenu: React.FC = () => {
   };
   
   const totalWealth = state.money + getTotalPortfolioValue();
+
+  const restartTutorial = () => {
+    dispatch({ type: 'RESTART_TUTORIAL' });
+  };
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 animate-fade-in">
       <div className="max-w-md mx-auto">
         <div className="text-center mb-8 pt-8">
           <div className="mb-4">
-            <div className="w-20 h-20 mx-auto bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center mb-4">
+            <div className="w-20 h-20 mx-auto bg-gradient-to-br from-green-400 via-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4 animate-pulse">
               <TrendingUp className="w-10 h-10 text-white" />
             </div>
-            <h1 className="text-4xl font-bold text-white mb-2">Stock Tycoon</h1>
+            <h1 className="text-4xl font-bold text-white mb-2 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">Stock Tycoon</h1>
             <p className="text-gray-300">Build Your Financial Empire</p>
           </div>
         </div>
         
-        <Card className="bg-slate-800/50 backdrop-blur-md border-slate-600 mb-6">
+        <Card className="bg-slate-800/60 backdrop-blur-md border-slate-600 mb-6 animate-scale-in">
           <CardHeader>
             <CardTitle className="text-white text-center">Your Wealth</CardTitle>
           </CardHeader>
@@ -53,7 +57,7 @@ const MainMenu: React.FC = () => {
         <div className="space-y-4">
           <Button 
             onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'market' })}
-            className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-lg py-6"
+            className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-lg py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg"
           >
             <Play className="w-6 h-6 mr-3" />
             Start Trading
@@ -61,7 +65,7 @@ const MainMenu: React.FC = () => {
           
           <Button 
             onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'shop' })}
-            className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white text-lg py-6"
+            className="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white text-lg py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg"
           >
             <ShoppingBag className="w-6 h-6 mr-3" />
             Luxury Shop
@@ -69,7 +73,7 @@ const MainMenu: React.FC = () => {
           
           <Button 
             onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'money-shop' })}
-            className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white text-lg py-6"
+            className="w-full bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 text-white text-lg py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg"
           >
             <DollarSign className="w-6 h-6 mr-3" />
             Get Money
@@ -77,7 +81,7 @@ const MainMenu: React.FC = () => {
           
           <Button 
             onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'inventory' })}
-            className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-lg py-6"
+            className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white text-lg py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg"
           >
             <Package className="w-6 h-6 mr-3" />
             My Collection
@@ -87,7 +91,7 @@ const MainMenu: React.FC = () => {
             <Button 
               onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'settings' })}
               variant="outline"
-              className="bg-slate-800/50 border-slate-600 text-white hover:bg-slate-700"
+              className="bg-slate-800/50 border-slate-600 text-white hover:bg-slate-700 transition-all duration-300 hover:scale-105"
             >
               <Settings className="w-4 h-4 mr-2" />
               Settings
@@ -96,22 +100,30 @@ const MainMenu: React.FC = () => {
             <Button 
               onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'help' })}
               variant="outline"
-              className="bg-slate-800/50 border-slate-600 text-white hover:bg-slate-700"
+              className="bg-slate-800/50 border-slate-600 text-white hover:bg-slate-700 transition-all duration-300 hover:scale-105"
             >
               <HelpCircle className="w-4 h-4 mr-2" />
               Help
             </Button>
           </div>
+
+          <Button 
+            onClick={restartTutorial}
+            variant="outline"
+            className="w-full bg-slate-800/50 border-slate-600 text-white hover:bg-slate-700 transition-all duration-300 hover:scale-105 mt-4"
+          >
+            Restart Tutorial
+          </Button>
         </div>
         
         {/* Daily Reward Notification */}
         {!state.dailyRewardClaimed && (
-          <Card className="bg-yellow-500/20 backdrop-blur-md border-yellow-400/30 mt-6">
+          <Card className="bg-yellow-500/20 backdrop-blur-md border-yellow-400/30 mt-6 animate-pulse">
             <CardContent className="p-4 text-center">
               <div className="text-yellow-400 font-semibold mb-2">Daily Bonus Available!</div>
               <Button
                 onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'money-shop' })}
-                className="bg-yellow-500 hover:bg-yellow-600 text-white"
+                className="bg-yellow-500 hover:bg-yellow-600 text-white transition-all duration-300 hover:scale-105"
               >
                 Claim $1,000
               </Button>

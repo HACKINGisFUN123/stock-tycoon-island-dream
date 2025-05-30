@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useGame } from '../contexts/GameContext';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { X, ArrowRight, TrendingUp, ShoppingBag, Package } from 'lucide-react';
+import { X, ArrowRight, ArrowLeft, TrendingUp, ShoppingBag, Package } from 'lucide-react';
 
 const Tutorial: React.FC = () => {
   const { dispatch } = useGame();
@@ -45,6 +45,12 @@ const Tutorial: React.FC = () => {
     }
   };
 
+  const prevStep = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
   const closeTutorial = () => {
     dispatch({ type: 'COMPLETE_TUTORIAL' });
   };
@@ -52,19 +58,21 @@ const Tutorial: React.FC = () => {
   const step = tutorialSteps[currentStep];
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <Card className="bg-slate-800 border-slate-600 max-w-md w-full">
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 animate-fade-in">
+      <Card className="bg-slate-800 border-slate-600 max-w-md w-full animate-scale-in">
         <CardHeader className="text-center">
           <div className="flex items-center justify-between">
             <div className="w-6"></div>
             <div className="flex flex-col items-center">
-              {step.icon}
+              <div className="transition-all duration-300 ease-in-out">
+                {step.icon}
+              </div>
               <CardTitle className="text-white mt-2">{step.title}</CardTitle>
             </div>
             <Button
               onClick={closeTutorial}
               variant="ghost"
-              className="w-6 h-6 p-0 text-gray-400 hover:text-white"
+              className="w-6 h-6 p-0 text-gray-400 hover:text-white transition-colors"
             >
               <X className="w-4 h-4" />
             </Button>
@@ -76,13 +84,23 @@ const Tutorial: React.FC = () => {
           </p>
           
           <div className="flex items-center justify-between">
+            <Button
+              onClick={prevStep}
+              variant="outline"
+              className="bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
+              disabled={currentStep === 0}
+            >
+              <ArrowLeft className="w-4 h-4 mr-1" />
+              Back
+            </Button>
+            
             <div className="text-sm text-gray-400">
               Step {currentStep + 1} of {tutorialSteps.length}
             </div>
             
             <Button
               onClick={nextStep}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-blue-600 hover:bg-blue-700 text-white transition-colors"
             >
               {currentStep < tutorialSteps.length - 1 ? (
                 <>
@@ -98,7 +116,7 @@ const Tutorial: React.FC = () => {
             {tutorialSteps.map((_, index) => (
               <div
                 key={index}
-                className={`w-2 h-2 rounded-full ${
+                className={`w-2 h-2 rounded-full transition-colors duration-300 ${
                   index === currentStep ? 'bg-blue-400' : 'bg-gray-600'
                 }`}
               />
