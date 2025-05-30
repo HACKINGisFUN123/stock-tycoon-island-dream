@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
 export interface Stock {
@@ -66,6 +67,11 @@ type GameAction =
   | { type: 'RESTART_TUTORIAL' }
   | { type: 'UNLOCK_ITEM'; itemId: string };
 
+interface GameContextType {
+  state: GameState;
+  dispatch: React.Dispatch<GameAction>;
+}
+
 const initialStocks: Stock[] = [
   {
     id: '1',
@@ -75,7 +81,8 @@ const initialStocks: Stock[] = [
     trend: 'up',
     logo: '🍎',
     history: [150],
-    volatility: 0.02
+    volatility: 0.02,
+    color: '#007AFF'
   },
   {
     id: '2',
@@ -85,17 +92,19 @@ const initialStocks: Stock[] = [
     trend: 'up',
     logo: '🚗',
     history: [800],
-    volatility: 0.04
+    volatility: 0.04,
+    color: '#E31E24'
   },
   {
     id: '3',
     name: 'Microsoft Corp.',
     symbol: 'MSFT',
     price: 300,
-    trend: 'stable',
+    trend: 'neutral',
     logo: '💻',
     history: [300],
-    volatility: 0.015
+    volatility: 0.015,
+    color: '#00BCF2'
   },
   {
     id: '4',
@@ -105,17 +114,19 @@ const initialStocks: Stock[] = [
     trend: 'up',
     logo: '📦',
     history: [3200],
-    volatility: 0.025
+    volatility: 0.025,
+    color: '#FF9900'
   },
   {
     id: '5',
     name: 'Alphabet Inc.',
     symbol: 'GOOGL',
     price: 2500,
-    trend: 'stable',
+    trend: 'neutral',
     logo: '🔍',
     history: [2500],
-    volatility: 0.02
+    volatility: 0.02,
+    color: '#4285F4'
   }
 ];
 
@@ -130,11 +141,20 @@ const generateLuxuryItems = (): LuxuryItem[] => {
     { name: 'מקלארן 720S', description: 'סופר קאר בריטי', price: 750000, diamondPrice: 3000 },
     { name: 'בוגאטי שירון', description: 'ההיפר קאר הכי מהיר', price: 3000000, diamondPrice: 12000 },
     { name: 'רולס רויס פנטום', description: 'יוקרה בריטית', price: 600000, diamondPrice: 2400 },
-    { name: 'בנטלי קונטינnett GT', description: 'יוקרה וביצועים', price: 300000, diamondPrice: 1200 },
+    { name: 'בנטלי קונטיננטל GT', description: 'יוקרה וביצועים', price: 300000, diamondPrice: 1200 },
     { name: 'אסטון מרטין DB11', description: 'אלגנטיות בריטית', price: 400000, diamondPrice: 1600 },
     { name: 'מרצדס AMG GT63', description: 'ביצועים גרמניים', price: 250000, diamondPrice: 1000 },
     { name: 'BMW M8 קופה', description: 'מכונית ספורט גרמנית', price: 180000, diamondPrice: 720 },
-    // Add more cars...
+    { name: 'אאודי RS7', description: 'ספורט וויגן גרמני', price: 170000, diamondPrice: 680 },
+    { name: 'יגואר F-Type', description: 'ספורט בריטי קלאסי', price: 120000, diamondPrice: 480 },
+    { name: 'קורבט Z06', description: 'אמריקאי אגדי', price: 140000, diamondPrice: 560 },
+    { name: 'גט ר35', description: 'יפני מהיר', price: 160000, diamondPrice: 640 },
+    { name: 'פורש טיקאן', description: 'חשמלי יוקרתי', price: 190000, diamondPrice: 760 },
+    { name: 'מזראטי MC20', description: 'איטלקי מרהיב', price: 280000, diamondPrice: 1120 },
+    { name: 'לוטוס אמירה', description: 'בריטי קל משקל', price: 150000, diamondPrice: 600 },
+    { name: 'מקלארן 540C', description: 'סופר קאר נגיש', price: 220000, diamondPrice: 880 },
+    { name: 'פורש 718 קיימן', description: 'ספורט מושלם', price: 110000, diamondPrice: 440 },
+    { name: 'BMW i8', description: 'היברידי עתידני', price: 160000, diamondPrice: 640 }
   ];
 
   // Houses (25 items)
@@ -144,43 +164,29 @@ const generateLuxuryItems = (): LuxuryItem[] => {
     { name: 'טירה בצרפת', description: 'טירה היסטורית', price: 25000000, diamondPrice: 100000 },
     { name: 'וילה בהמפטונס', description: 'נופש קיצי יוקרתי', price: 8000000, diamondPrice: 32000 },
     { name: 'בית בביברלי הילס', description: 'שכונת הסלבריטאים', price: 12000000, diamondPrice: 48000 },
-    // Add more houses...
-  ];
-
-  // Yachts (20 items)
-  const yachts = [
-    { name: 'יאכטה של 50 מטר', description: 'יוקרה על המים', price: 3000000, diamondPrice: 12000 },
-    { name: 'מגה יאכטה 80 מטר', description: 'ארמון צף', price: 15000000, diamondPrice: 60000 },
-    { name: 'יאכטה פרטית 30 מטר', description: 'פרטיות מוחלטת', price: 1500000, diamondPrice: 6000 },
-    // Add more yachts...
-  ];
-
-  // Jets (15 items)
-  const jets = [
-    { name: 'ג\'ט פרטי סיסנה', description: 'מטוס פרטי קטן', price: 5000000, diamondPrice: 20000 },
-    { name: 'גולפסטרים G650', description: 'יוקרה בשמיים', price: 75000000, diamondPrice: 300000 },
-    { name: 'בומברדייה גלובל 7500', description: 'מטוס בינלאומי', price: 85000000, diamondPrice: 340000 },
-    // Add more jets...
-  ];
-
-  // Accessories (30 items)
-  const accessories = [
-    { name: 'שעון רולקס דייטונה', description: 'שעון יוקרה שוויצרי', price: 50000, diamondPrice: 200 },
-    { name: 'אייפון 15 פרו מקס זהב', description: 'טלפון יוקרה', price: 2000, diamondPrice: 8 },
-    { name: 'תיק הרמס ברקין', description: 'תיק יד יוקרתי', price: 25000, diamondPrice: 100 },
-    { name: 'משקפי טום פורד', description: 'משקפיים מעוצבים', price: 800, diamondPrice: 3 },
-    // Add more accessories...
+    { name: 'פנטהאוז בדובאי', description: 'יוקרה במזרח התיכון', price: 10000000, diamondPrice: 40000 },
+    { name: 'וילה בטוסקנה', description: 'כפרי איטלקי', price: 6000000, diamondPrice: 24000 },
+    { name: 'דירה בלונדון', description: 'מיקום מרכזי', price: 7000000, diamondPrice: 28000 },
+    { name: 'בית בזכוכית מיאמי', description: 'מודרני על החוף', price: 9000000, diamondPrice: 36000 },
+    { name: 'וילה בקוטדז׳ור', description: 'נוף לים התיכון', price: 11000000, diamondPrice: 44000 },
+    { name: 'פנטהאוז בטוקיו', description: 'טכנולוגיה יפנית', price: 8500000, diamondPrice: 34000 },
+    { name: 'וילה בהוואי', description: 'גן עדן טרופי', price: 7500000, diamondPrice: 30000 },
+    { name: 'בית בצ׳לסי', description: 'אזור אמנותי', price: 13000000, diamondPrice: 52000 },
+    { name: 'וילה בסן טרופז', description: 'יוקרה צרפתית', price: 14000000, diamondPrice: 56000 },
+    { name: 'פנטהאוז במונקו', description: 'מרכז ההימורים', price: 16000000, diamondPrice: 64000 },
+    { name: 'וילה בסנטוריני', description: 'יווני קלאסי', price: 4500000, diamondPrice: 18000 },
+    { name: 'בית באספן', description: 'סקי וטבע', price: 6500000, diamondPrice: 26000 },
+    { name: 'וילה בברבדוס', description: 'קריבי יוקרתי', price: 5500000, diamondPrice: 22000 },
+    { name: 'פנטהאוז בסידני', description: 'נוף לנמל', price: 9500000, diamondPrice: 38000 },
+    { name: 'וילה בקיפוס', description: 'ים תיכוני', price: 3500000, diamondPrice: 14000 }
   ];
 
   // Add all items with proper categorization
   let id = 1;
   
-  [...cars.slice(0, 10), ...houses.slice(0, 10), ...yachts.slice(0, 8), ...jets.slice(0, 5), ...accessories.slice(0, 15)].forEach((item, index) => {
-    let category = 'car';
-    if (index >= 10 && index < 20) category = 'house';
-    else if (index >= 20 && index < 28) category = 'yacht';
-    else if (index >= 28 && index < 33) category = 'jet';
-    else if (index >= 33) category = 'accessories';
+  [...cars.slice(0, 20), ...houses.slice(0, 20)].forEach((item, index) => {
+    let category: 'car' | 'house' = 'car';
+    if (index >= 20) category = 'house';
     
     items.push({
       id: id.toString(),
@@ -203,26 +209,26 @@ const updateStockPrices = (stocks: Stock[]): Stock[] => {
   return stocks.map(stock => {
     const volatility = stock.volatility || 0.02;
     
-    // Bias towards positive movement (60% chance of going up)
+    // Enhanced bias towards positive movement (70% chance of going up)
     const trend = Math.random();
     let change;
     
-    if (trend < 0.6) {
-      // Positive movement (60% chance)
-      change = Math.random() * volatility * 1.5; // Slightly larger gains
-    } else if (trend < 0.85) {
-      // Small negative movement (25% chance)
-      change = -Math.random() * volatility * 0.5; // Smaller losses
+    if (trend < 0.7) {
+      // Positive movement (70% chance)
+      change = Math.random() * volatility * 1.2;
+    } else if (trend < 0.9) {
+      // Small negative movement (20% chance)
+      change = -Math.random() * volatility * 0.3;
     } else {
-      // Larger negative movement (15% chance)
-      change = -Math.random() * volatility * 1.2;
+      // Larger negative movement (10% chance)
+      change = -Math.random() * volatility * 0.8;
     }
     
     // Prevent stock from going below $1
     const newPrice = Math.max(1, stock.price * (1 + change));
     
     // Determine trend based on price movement
-    let newTrend: 'up' | 'down' | 'stable' = 'stable';
+    let newTrend: 'up' | 'down' | 'neutral' = 'neutral';
     if (change > 0.01) newTrend = 'up';
     else if (change < -0.01) newTrend = 'down';
     
@@ -230,7 +236,7 @@ const updateStockPrices = (stocks: Stock[]): Stock[] => {
       ...stock,
       price: newPrice,
       trend: newTrend,
-      history: [...stock.history.slice(-29), newPrice] // Keep last 30 prices
+      history: [...stock.history.slice(-29), newPrice]
     };
   });
 };
@@ -387,7 +393,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
-const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(gameReducer, initialState);
   
   // Update stock prices every 2 seconds for more dynamic feel
@@ -409,12 +415,9 @@ const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     });
     
     if (newUnlocks.length > 0) {
-      // Create a new state with updated unlocked items
-      const updatedState = {
-        ...state,
-        unlockedItems: [...state.unlockedItems, ...newUnlocks]
-      };
-      // This would need a proper action to handle unlocking
+      newUnlocks.forEach(itemId => {
+        dispatch({ type: 'UNLOCK_ITEM', itemId });
+      });
     }
   }, [state.money, state.luxuryItems, state.unlockedItems]);
   
