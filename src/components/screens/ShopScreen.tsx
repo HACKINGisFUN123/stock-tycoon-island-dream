@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useGame } from '../../contexts/GameContext';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { ArrowLeft, Lock, CheckCircle, ShoppingCart, Car, Home, Plane, Smartphone, ChevronUp, Diamond, DollarSign, Crown, Gem, Shirt, Globe, Anchor, Watch } from 'lucide-react';
+import { ArrowLeft, Lock, CheckCircle, ShoppingCart, Car, Home, Plane, Smartphone, ChevronUp, Diamond, DollarSign, Crown, Gem, Shirt, Globe } from 'lucide-react';
 
 const ShopScreen: React.FC = () => {
   const { state, dispatch } = useGame();
@@ -24,15 +24,15 @@ const ShopScreen: React.FC = () => {
   };
   
   const categories = [
-    { id: 'all', name: 'הכל', icon: ShoppingCart, color: 'from-blue-500 to-purple-500' },
-    { id: 'car', name: 'רכבים', icon: Car, color: 'from-red-500 to-orange-500' },
-    { id: 'house', name: 'נדל״ן', icon: Home, color: 'from-green-500 to-emerald-500' },
-    { id: 'yacht', name: 'יאכטות', icon: Anchor, color: 'from-blue-500 to-cyan-500' },
-    { id: 'jet', name: 'מטוסים', icon: Plane, color: 'from-gray-500 to-slate-500' },
-    { id: 'accessories', name: 'אביזרים', icon: Watch, color: 'from-purple-500 to-pink-500' },
-    { id: 'jewelry', name: 'תכשיטים', icon: Gem, color: 'from-yellow-500 to-amber-500' },
-    { id: 'fashion', name: 'אופנה', icon: Shirt, color: 'from-pink-500 to-rose-500' },
-    { id: 'countries', name: 'מקומות', icon: Globe, color: 'from-indigo-500 to-blue-500' },
+    { id: 'all', name: 'All Items', icon: ShoppingCart, color: 'from-blue-500 to-purple-500' },
+    { id: 'car', name: 'Cars', icon: Car, color: 'from-red-500 to-orange-500' },
+    { id: 'house', name: 'Real Estate', icon: Home, color: 'from-green-500 to-emerald-500' },
+    { id: 'yacht', name: 'Yachts', icon: Plane, color: 'from-blue-500 to-cyan-500' },
+    { id: 'jet', name: 'Aircraft', icon: Plane, color: 'from-gray-500 to-slate-500' },
+    { id: 'accessories', name: 'Accessories', icon: Smartphone, color: 'from-purple-500 to-pink-500' },
+    { id: 'jewelry', name: 'Jewelry', icon: Gem, color: 'from-yellow-500 to-amber-500' },
+    { id: 'fashion', name: 'Fashion', icon: Shirt, color: 'from-pink-500 to-rose-500' },
+    { id: 'countries', name: 'Locations', icon: Globe, color: 'from-indigo-500 to-blue-500' },
   ];
 
   // Auto-unlock items based on money
@@ -63,12 +63,12 @@ const ShopScreen: React.FC = () => {
             className="bg-white/10 border-white/30 text-white hover:bg-white/20 transition-all duration-300 hover:scale-105"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            חזרה
+            Back
           </Button>
           
-          <div className="text-center flex-1">
-            <h1 className="text-2xl font-bold text-white">חנות יוקרה</h1>
-            <div className="flex items-center justify-center gap-4 text-white/80 text-sm">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-white">Luxury Shop</h1>
+            <div className="flex items-center gap-4 text-white/80 text-sm">
               <div className="flex items-center gap-1">
                 <DollarSign className="w-4 h-4 text-green-400" />
                 {formatMoney(state.money)}
@@ -79,6 +79,8 @@ const ShopScreen: React.FC = () => {
               </div>
             </div>
           </div>
+          
+          <div className="w-20" />
         </div>
 
         {/* Enhanced Category Filter */}
@@ -89,13 +91,13 @@ const ShopScreen: React.FC = () => {
               <Button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`relative overflow-hidden transition-all duration-300 hover:scale-105 p-2 h-auto flex flex-col items-center gap-1 ${
+                className={`relative overflow-hidden transition-all duration-300 hover:scale-105 p-3 h-auto flex flex-col items-center gap-2 ${
                   selectedCategory === category.id
                     ? `bg-gradient-to-r ${category.color} text-white shadow-lg`
                     : 'bg-white/10 hover:bg-white/20 text-white border border-white/30'
                 }`}
               >
-                <Icon className="w-4 h-4" />
+                <Icon className="w-5 h-5" />
                 <span className="text-xs font-medium">{category.name}</span>
               </Button>
             );
@@ -157,9 +159,9 @@ const ShopScreen: React.FC = () => {
                           onClick={() => handlePurchase(item.id, 'money')}
                           disabled={!canAffordMoney}
                           size="sm"
-                          className={`${canAffordMoney ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-500'} text-white transition-all duration-300 hover:scale-105`}
+                          className={`${canAffordMoney ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-500'} text-white`}
                         >
-                          קנה
+                          Buy
                         </Button>
                       )}
                     </div>
@@ -174,9 +176,9 @@ const ShopScreen: React.FC = () => {
                           onClick={() => handlePurchase(item.id, 'diamonds')}
                           disabled={!canAffordDiamonds}
                           size="sm"
-                          className={`${canAffordDiamonds ? 'bg-purple-500 hover:bg-purple-600' : 'bg-gray-500'} text-white transition-all duration-300 hover:scale-105`}
+                          className={`${canAffordDiamonds ? 'bg-purple-500 hover:bg-purple-600' : 'bg-gray-500'} text-white`}
                         >
-                          קנה
+                          Buy
                         </Button>
                       )}
                     </div>
@@ -184,7 +186,7 @@ const ShopScreen: React.FC = () => {
                   
                   {!isUnlocked && (
                     <div className="text-xs text-white/60 text-center">
-                      יפתח ב-{formatMoney(item.price * 0.5)}
+                      Unlock at {formatMoney(item.price * 0.5)}
                     </div>
                   )}
                   
@@ -192,7 +194,7 @@ const ShopScreen: React.FC = () => {
                     <div className="text-center">
                       <div className="flex items-center justify-center gap-2 text-green-400 font-semibold">
                         <CheckCircle className="w-5 h-5" />
-                        בבעלותך
+                        Owned
                       </div>
                     </div>
                   )}

@@ -41,29 +41,29 @@ const MoneyShopScreen: React.FC = () => {
   };
   
   const adOffers = [
-    { id: 'small-ad', reward: 1000, description: 'צפה בפרסומת קצרה', icon: Play },
-    { id: 'medium-ad', reward: 2500, description: 'צפה בפרסומת וידאו', icon: Play },
-    { id: 'big-ad', reward: 5000, description: 'צפה בפרסומת ארוכה', icon: Play },
+    { id: 'small-ad', reward: 500, description: 'Watch a short ad', icon: Play },
+    { id: 'medium-ad', reward: 1000, description: 'Watch a video ad', icon: Play },
+    { id: 'big-ad', reward: 2500, description: 'Watch a longer ad', icon: Play },
   ];
   
   const moneyOffers = [
-    { id: 'starter', amount: 25000, price: '$0.99', description: 'חבילת מתחילים', icon: Gift, popular: false },
-    { id: 'investor', amount: 100000, price: '$4.99', description: 'חבילת משקיעים', icon: Star, popular: true },
-    { id: 'tycoon', amount: 500000, price: '$19.99', description: 'חבילת טייקון', icon: Zap, popular: false },
-    { id: 'millionaire', amount: 2000000, price: '$49.99', description: 'חבילת מיליונר', icon: Crown, popular: false },
+    { id: 'starter', amount: 10000, price: '$0.99', description: 'Starter Pack', icon: Gift, popular: false },
+    { id: 'investor', amount: 50000, price: '$4.99', description: 'Investor Pack', icon: Star, popular: true },
+    { id: 'tycoon', amount: 250000, price: '$19.99', description: 'Tycoon Pack', icon: Zap, popular: false },
+    { id: 'millionaire', amount: 1000000, price: '$49.99', description: 'Millionaire Pack', icon: Zap, popular: false },
   ];
 
   const diamondOffers = [
-    { id: 'diamond-small', amount: 100, price: '$1.99', description: 'יהלומי מתחילים', icon: Diamond, popular: false },
-    { id: 'diamond-medium', amount: 500, price: '$7.99', description: 'חבילת יהלומים', icon: Diamond, popular: true },
-    { id: 'diamond-large', amount: 1500, price: '$19.99', description: 'תיבת יהלומים', icon: Crown, popular: false },
-    { id: 'diamond-mega', amount: 5000, price: '$49.99', description: 'כספת יהלומים', icon: Crown, popular: false },
+    { id: 'diamond-small', amount: 100, price: '$1.99', description: 'Diamond Starter', icon: Diamond, popular: false },
+    { id: 'diamond-medium', amount: 500, price: '$7.99', description: 'Diamond Pack', icon: Diamond, popular: true },
+    { id: 'diamond-large', amount: 1500, price: '$19.99', description: 'Diamond Chest', icon: Crown, popular: false },
+    { id: 'diamond-mega', amount: 5000, price: '$49.99', description: 'Diamond Vault', icon: Crown, popular: false },
   ];
 
   const diamondToMoneyOffers = [
-    { diamondCost: 25, moneyAmount: 5000, description: 'כסף מהיר' },
-    { diamondCost: 100, moneyAmount: 25000, description: 'חבילת כסף' },
-    { diamondCost: 400, moneyAmount: 120000, description: 'תיבת כסף' },
+    { diamondCost: 10, moneyAmount: 2000, description: 'Quick Cash' },
+    { diamondCost: 50, moneyAmount: 12000, description: 'Cash Bundle' },
+    { diamondCost: 200, moneyAmount: 50000, description: 'Cash Chest' },
   ];
 
   const canUseDailyWheel = !state.dailySpinUsed || state.lastSpinDate !== new Date().toDateString();
@@ -78,12 +78,12 @@ const MoneyShopScreen: React.FC = () => {
             className="bg-white/10 border-white/30 text-white hover:bg-white/20 transition-all duration-300 hover:scale-105"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            חזרה
+            Back
           </Button>
           
-          <div className="text-center flex-1">
-            <h1 className="text-2xl font-bold text-white">חנות מטבעות</h1>
-            <div className="flex items-center justify-center gap-4 text-white/80 text-sm">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-white">Currency Shop</h1>
+            <div className="flex items-center gap-4 text-white/80 text-sm">
               <div className="flex items-center gap-1">
                 <DollarSign className="w-4 h-4 text-green-400" />
                 {formatMoney(state.money)}
@@ -94,6 +94,8 @@ const MoneyShopScreen: React.FC = () => {
               </div>
             </div>
           </div>
+          
+          <div className="w-20" />
         </div>
         
         <div className="space-y-6">
@@ -102,7 +104,7 @@ const MoneyShopScreen: React.FC = () => {
             <CardHeader>
               <CardTitle className="text-yellow-400 flex items-center gap-2">
                 <Star className="w-5 h-5" />
-                גלגל המזל
+                Wheel of Fortune
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -113,7 +115,7 @@ const MoneyShopScreen: React.FC = () => {
                   className="flex-1 bg-blue-500 hover:bg-blue-600 text-white transition-all duration-300 hover:scale-105"
                 >
                   <Gift className="w-4 h-4 mr-2" />
-                  {canUseDailyWheel ? 'סיבוב יומי חינם' : 'חזור מחר'}
+                  {canUseDailyWheel ? 'Free Daily Spin' : 'Come Back Tomorrow'}
                 </Button>
                 
                 <Button
@@ -121,7 +123,7 @@ const MoneyShopScreen: React.FC = () => {
                   className="flex-1 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold transition-all duration-300 hover:scale-105"
                 >
                   <Crown className="w-4 h-4 mr-2" />
-                  סיבוב פרימיום - $2.99
+                  Premium Spin - $2.99
                 </Button>
               </div>
             </CardContent>
@@ -132,7 +134,7 @@ const MoneyShopScreen: React.FC = () => {
             <CardHeader>
               <CardTitle className="text-purple-400 flex items-center gap-2">
                 <Diamond className="w-5 h-5" />
-                המר יהלומים לכסף
+                Convert Diamonds to Money
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -164,7 +166,7 @@ const MoneyShopScreen: React.FC = () => {
             <CardHeader>
               <CardTitle className="text-green-400 flex items-center gap-2">
                 <Gift className="w-5 h-5" />
-                כסף חינם - צפה בפרסומות
+                Free Money - Watch Ads
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -186,7 +188,7 @@ const MoneyShopScreen: React.FC = () => {
                       className="bg-green-500 hover:bg-green-600 text-white transition-all duration-300 hover:scale-105"
                     >
                       <Play className="w-4 h-4 mr-1" />
-                      צפה
+                      Watch
                     </Button>
                   </div>
                 );
@@ -199,7 +201,7 @@ const MoneyShopScreen: React.FC = () => {
             <CardHeader>
               <CardTitle className="text-blue-400 flex items-center gap-2">
                 <DollarSign className="w-5 h-5" />
-                רכישת כסף
+                Purchase Money
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -213,7 +215,7 @@ const MoneyShopScreen: React.FC = () => {
                   }`}>
                     {offer.popular && (
                       <div className="absolute -top-2 -right-2 bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded-full">
-                        פופולרי
+                        POPULAR
                       </div>
                     )}
                     <div className="flex items-center gap-3">
@@ -248,7 +250,7 @@ const MoneyShopScreen: React.FC = () => {
             <CardHeader>
               <CardTitle className="text-purple-400 flex items-center gap-2">
                 <Diamond className="w-5 h-5" />
-                רכישת יהלומים
+                Purchase Diamonds
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -262,7 +264,7 @@ const MoneyShopScreen: React.FC = () => {
                   }`}>
                     {offer.popular && (
                       <div className="absolute -top-2 -right-2 bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded-full">
-                        פופולרי
+                        POPULAR
                       </div>
                     )}
                     <div className="flex items-center gap-3">
@@ -272,7 +274,7 @@ const MoneyShopScreen: React.FC = () => {
                         <Icon className={`w-5 h-5 ${offer.popular ? 'text-yellow-400' : 'text-purple-400'}`} />
                       </div>
                       <div>
-                        <div className="text-white font-semibold">{offer.amount} יהלומים</div>
+                        <div className="text-white font-semibold">{offer.amount} Diamonds</div>
                         <div className="text-white/70 text-sm">{offer.description}</div>
                       </div>
                     </div>
@@ -297,7 +299,7 @@ const MoneyShopScreen: React.FC = () => {
             <CardHeader>
               <CardTitle className="text-orange-400 flex items-center gap-2">
                 <Gift className="w-5 h-5" />
-                בונוס יומי
+                Daily Bonus
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -308,11 +310,11 @@ const MoneyShopScreen: React.FC = () => {
                     className="bg-orange-500 hover:bg-orange-600 text-white transition-all duration-300 hover:scale-105"
                   >
                     <Gift className="w-4 h-4 mr-2" />
-                    קבל {formatMoney(2000)} בונוס יומי
+                    Claim {formatMoney(1000)} Daily Bonus
                   </Button>
                 ) : (
                   <div className="text-white/70 p-4 bg-white/10 rounded-lg">
-                    בונוס יומי נלקח! חזור מחר.
+                    Daily bonus claimed! Come back tomorrow.
                   </div>
                 )}
               </div>

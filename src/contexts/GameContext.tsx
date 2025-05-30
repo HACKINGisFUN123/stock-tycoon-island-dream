@@ -9,7 +9,6 @@ export interface Stock {
   trend: 'up' | 'down' | 'neutral';
   color: string;
   logo?: string;
-  volatility?: number;
 }
 
 export interface LuxuryItem {
@@ -67,175 +66,124 @@ type GameAction =
   | { type: 'UNLOCK_ITEM'; itemId: string };
 
 const initialStocks: Stock[] = [
-  {
-    id: '1',
-    name: 'Apple Inc.',
-    symbol: 'AAPL',
-    price: 150,
-    trend: 'up',
-    logo: '🍎',
-    history: [150],
-    volatility: 0.02
-  },
-  {
-    id: '2',
-    name: 'Tesla Inc.',
-    symbol: 'TSLA',
-    price: 800,
-    trend: 'up',
-    logo: '🚗',
-    history: [800],
-    volatility: 0.04
-  },
-  {
-    id: '3',
-    name: 'Microsoft Corp.',
-    symbol: 'MSFT',
-    price: 300,
-    trend: 'stable',
-    logo: '💻',
-    history: [300],
-    volatility: 0.015
-  },
-  {
-    id: '4',
-    name: 'Amazon.com Inc.',
-    symbol: 'AMZN',
-    price: 3200,
-    trend: 'up',
-    logo: '📦',
-    history: [3200],
-    volatility: 0.025
-  },
-  {
-    id: '5',
-    name: 'Alphabet Inc.',
-    symbol: 'GOOGL',
-    price: 2500,
-    trend: 'stable',
-    logo: '🔍',
-    history: [2500],
-    volatility: 0.02
-  }
+  // Tech Giants
+  { id: 'apple', name: 'Apple Inc', symbol: 'AAPL', price: 175, history: [175], trend: 'neutral', color: '#007AFF', logo: '🍎' },
+  { id: 'microsoft', name: 'Microsoft Corp', symbol: 'MSFT', price: 380, history: [380], trend: 'neutral', color: '#00BCF2', logo: '💻' },
+  { id: 'google', name: 'Alphabet Inc', symbol: 'GOOGL', price: 2800, history: [2800], trend: 'neutral', color: '#4285F4', logo: '🔍' },
+  { id: 'amazon', name: 'Amazon.com Inc', symbol: 'AMZN', price: 3400, history: [3400], trend: 'neutral', color: '#FF9900', logo: '📦' },
+  { id: 'meta', name: 'Meta Platforms Inc', symbol: 'META', price: 320, history: [320], trend: 'neutral', color: '#1877F2', logo: '👥' },
+  { id: 'tesla', name: 'Tesla Inc', symbol: 'TSLA', price: 250, history: [250], trend: 'neutral', color: '#CC0000', logo: '⚡' },
+  { id: 'netflix', name: 'Netflix Inc', symbol: 'NFLX', price: 450, history: [450], trend: 'neutral', color: '#E50914', logo: '🎬' },
+  { id: 'nvidia', name: 'NVIDIA Corp', symbol: 'NVDA', price: 900, history: [900], trend: 'neutral', color: '#76B900', logo: '🎮' },
+  
+  // Traditional Companies
+  { id: 'nike', name: 'Nike Inc', symbol: 'NKE', price: 120, history: [120], trend: 'neutral', color: '#32D74B', logo: '👟' },
+  { id: 'coca-cola', name: 'Coca-Cola Co', symbol: 'KO', price: 60, history: [60], trend: 'neutral', color: '#FF2D2D', logo: '🥤' },
+  { id: 'mcdonalds', name: 'McDonald\'s Corp', symbol: 'MCD', price: 280, history: [280], trend: 'neutral', color: '#FFC72C', logo: '🍟' },
+  { id: 'disney', name: 'Walt Disney Co', symbol: 'DIS', price: 95, history: [95], trend: 'neutral', color: '#113CCF', logo: '🏰' },
+  { id: 'visa', name: 'Visa Inc', symbol: 'V', price: 240, history: [240], trend: 'neutral', color: '#1A1F71', logo: '💳' },
+  { id: 'jpmorgan', name: 'JPMorgan Chase', symbol: 'JPM', price: 150, history: [150], trend: 'neutral', color: '#0066CC', logo: '🏦' },
+  { id: 'johnson', name: 'Johnson & Johnson', symbol: 'JNJ', price: 170, history: [170], trend: 'neutral', color: '#CC0000', logo: '🏥' },
+  
+  // Energy & Finance
+  { id: 'berkshire', name: 'Berkshire Hathaway', symbol: 'BRK.A', price: 450000, history: [450000], trend: 'neutral', color: '#1B365D', logo: '💼' },
+  { id: 'exxon', name: 'Exxon Mobil Corp', symbol: 'XOM', price: 110, history: [110], trend: 'neutral', color: '#FF6600', logo: '⛽' },
+  { id: 'walmart', name: 'Walmart Inc', symbol: 'WMT', price: 160, history: [160], trend: 'neutral', color: '#004C91', logo: '🛒' },
+  { id: 'procter', name: 'Procter & Gamble', symbol: 'PG', price: 150, history: [150], trend: 'neutral', color: '#003DA5', logo: '🧴' },
+  
+  // Emerging Companies
+  { id: 'salesforce', name: 'Salesforce Inc', symbol: 'CRM', price: 200, history: [200], trend: 'neutral', color: '#00A1E0', logo: '☁️' },
+  { id: 'adobe', name: 'Adobe Inc', symbol: 'ADBE', price: 550, history: [550], trend: 'neutral', color: '#FF0000', logo: '🎨' },
+  { id: 'paypal', name: 'PayPal Holdings', symbol: 'PYPL', price: 75, history: [75], trend: 'neutral', color: '#0070BA', logo: '💰' },
+  { id: 'zoom', name: 'Zoom Video Comm', symbol: 'ZM', price: 70, history: [70], trend: 'neutral', color: '#2D8CFF', logo: '📹' },
+  { id: 'spotify', name: 'Spotify Technology', symbol: 'SPOT', price: 150, history: [150], trend: 'neutral', color: '#1DB954', logo: '🎵' },
+  { id: 'uber', name: 'Uber Technologies', symbol: 'UBER', price: 45, history: [45], trend: 'neutral', color: '#000000', logo: '🚗' },
 ];
 
-const generateLuxuryItems = (): LuxuryItem[] => {
-  const items: LuxuryItem[] = [];
+const initialLuxuryItems: LuxuryItem[] = [
+  // Cars
+  { id: 'sports-car', name: 'Sports Car', price: 80000, diamondPrice: 400, category: 'car', image: 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=400&h=300&fit=crop', description: 'Fast and stylish sports car', unlocked: true, owned: false },
+  { id: 'luxury-sedan', name: 'Luxury Sedan', price: 120000, diamondPrice: 600, category: 'car', image: 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=400&h=300&fit=crop', description: 'Premium luxury sedan', unlocked: false, owned: false },
+  { id: 'supercar', name: 'Supercar', price: 300000, diamondPrice: 1500, category: 'car', image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&h=300&fit=crop', description: 'Ultimate speed machine', unlocked: false, owned: false },
+  { id: 'hypercar', name: 'Hypercar', price: 800000, diamondPrice: 4000, category: 'car', image: 'https://images.unsplash.com/photo-1583121274602-3e2820c69886?w=400&h=300&fit=crop', description: 'Cutting-edge hypercar', unlocked: false, owned: false },
+  { id: 'vintage-car', name: 'Vintage Classic', price: 250000, diamondPrice: 1250, category: 'car', image: 'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?w=400&h=300&fit=crop', description: 'Timeless vintage automobile', unlocked: false, owned: false },
+  { id: 'electric-car', name: 'Electric Supercar', price: 200000, diamondPrice: 1000, category: 'car', image: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=400&h=300&fit=crop', description: 'Eco-friendly electric power', unlocked: false, owned: false },
   
-  // Cars (25 items)
-  const cars = [
-    { name: 'פורש 911 טורבו', description: 'מכונית ספורט יוקרתית', price: 200000, diamondPrice: 800 },
-    { name: 'למבורגיני הוראקאן', description: 'סופר קאר איטלקי', price: 350000, diamondPrice: 1400 },
-    { name: 'פרארי 488 GTB', description: 'מכונית מירוץ איטלקית', price: 500000, diamondPrice: 2000 },
-    { name: 'מקלארן 720S', description: 'סופר קאר בריטי', price: 750000, diamondPrice: 3000 },
-    { name: 'בוגאטי שירון', description: 'ההיפר קאר הכי מהיר', price: 3000000, diamondPrice: 12000 },
-    { name: 'רולס רויס פנטום', description: 'יוקרה בריטית', price: 600000, diamondPrice: 2400 },
-    { name: 'בנטלי קונטינnett GT', description: 'יוקרה וביצועים', price: 300000, diamondPrice: 1200 },
-    { name: 'אסטון מרטין DB11', description: 'אלגנטיות בריטית', price: 400000, diamondPrice: 1600 },
-    { name: 'מרצדס AMG GT63', description: 'ביצועים גרמניים', price: 250000, diamondPrice: 1000 },
-    { name: 'BMW M8 קופה', description: 'מכונית ספורט גרמנית', price: 180000, diamondPrice: 720 },
-    // Add more cars...
-  ];
-
-  // Houses (25 items)
-  const houses = [
-    { name: 'וילה במליבו', description: 'נוף לאוקיינוס השקט', price: 5000000, diamondPrice: 20000 },
-    { name: 'פנטהאוז במנהטן', description: 'נוף לסנטרל פארק', price: 15000000, diamondPrice: 60000 },
-    { name: 'טירה בצרפת', description: 'טירה היסטורית', price: 25000000, diamondPrice: 100000 },
-    { name: 'וילה בהמפטונס', description: 'נופש קיצי יוקרתי', price: 8000000, diamondPrice: 32000 },
-    { name: 'בית בביברלי הילס', description: 'שכונת הסלבריטאים', price: 12000000, diamondPrice: 48000 },
-    // Add more houses...
-  ];
-
-  // Yachts (20 items)
-  const yachts = [
-    { name: 'יאכטה של 50 מטר', description: 'יוקרה על המים', price: 3000000, diamondPrice: 12000 },
-    { name: 'מגה יאכטה 80 מטר', description: 'ארמון צף', price: 15000000, diamondPrice: 60000 },
-    { name: 'יאכטה פרטית 30 מטר', description: 'פרטיות מוחלטת', price: 1500000, diamondPrice: 6000 },
-    // Add more yachts...
-  ];
-
-  // Jets (15 items)
-  const jets = [
-    { name: 'ג\'ט פרטי סיסנה', description: 'מטוס פרטי קטן', price: 5000000, diamondPrice: 20000 },
-    { name: 'גולפסטרים G650', description: 'יוקרה בשמיים', price: 75000000, diamondPrice: 300000 },
-    { name: 'בומברדייה גלובל 7500', description: 'מטוס בינלאומי', price: 85000000, diamondPrice: 340000 },
-    // Add more jets...
-  ];
-
-  // Accessories (30 items)
-  const accessories = [
-    { name: 'שעון רולקס דייטונה', description: 'שעון יוקרה שוויצרי', price: 50000, diamondPrice: 200 },
-    { name: 'אייפון 15 פרו מקס זהב', description: 'טלפון יוקרה', price: 2000, diamondPrice: 8 },
-    { name: 'תיק הרמס ברקין', description: 'תיק יד יוקרתי', price: 25000, diamondPrice: 100 },
-    { name: 'משקפי טום פורד', description: 'משקפיים מעוצבים', price: 800, diamondPrice: 3 },
-    // Add more accessories...
-  ];
-
-  // Add all items with proper categorization
-  let id = 1;
+  // Houses
+  { id: 'penthouse', name: 'City Penthouse', price: 500000, diamondPrice: 2500, category: 'house', image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&h=300&fit=crop', description: 'Luxury penthouse with city views', unlocked: false, owned: false },
+  { id: 'mansion', name: 'Luxury Mansion', price: 1200000, diamondPrice: 6000, category: 'house', image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=300&fit=crop', description: 'Grand mansion with stunning grounds', unlocked: false, owned: false },
+  { id: 'beach-house', name: 'Beach Villa', price: 800000, diamondPrice: 4000, category: 'house', image: 'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=400&h=300&fit=crop', description: 'Oceanfront beach villa', unlocked: false, owned: false },
+  { id: 'mountain-cabin', name: 'Mountain Retreat', price: 350000, diamondPrice: 1750, category: 'house', image: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=300&fit=crop', description: 'Secluded mountain cabin', unlocked: false, owned: false },
+  { id: 'castle', name: 'Historic Castle', price: 5000000, diamondPrice: 25000, category: 'house', image: 'https://images.unsplash.com/photo-1520637836862-4d197d17c23a?w=400&h=300&fit=crop', description: 'Medieval castle estate', unlocked: false, owned: false },
   
-  [...cars.slice(0, 10), ...houses.slice(0, 10), ...yachts.slice(0, 8), ...jets.slice(0, 5), ...accessories.slice(0, 15)].forEach((item, index) => {
-    let category = 'car';
-    if (index >= 10 && index < 20) category = 'house';
-    else if (index >= 20 && index < 28) category = 'yacht';
-    else if (index >= 28 && index < 33) category = 'jet';
-    else if (index >= 33) category = 'accessories';
-    
-    items.push({
-      id: id.toString(),
-      name: item.name,
-      description: item.description,
-      price: item.price,
-      diamondPrice: item.diamondPrice,
-      image: `/placeholder-${category}.jpg`,
-      category,
-      owned: false,
-      unlocked: item.price <= 1000
-    });
-    id++;
-  });
-
-  return items;
-};
-
-const updateStockPrices = (stocks: Stock[]): Stock[] => {
-  return stocks.map(stock => {
-    const volatility = stock.volatility || 0.02;
-    
-    // Bias towards positive movement (60% chance of going up)
-    const trend = Math.random();
-    let change;
-    
-    if (trend < 0.6) {
-      // Positive movement (60% chance)
-      change = Math.random() * volatility * 1.5; // Slightly larger gains
-    } else if (trend < 0.85) {
-      // Small negative movement (25% chance)
-      change = -Math.random() * volatility * 0.5; // Smaller losses
-    } else {
-      // Larger negative movement (15% chance)
-      change = -Math.random() * volatility * 1.2;
-    }
-    
-    // Prevent stock from going below $1
-    const newPrice = Math.max(1, stock.price * (1 + change));
-    
-    // Determine trend based on price movement
-    let newTrend: 'up' | 'down' | 'stable' = 'stable';
-    if (change > 0.01) newTrend = 'up';
-    else if (change < -0.01) newTrend = 'down';
-    
-    return {
-      ...stock,
-      price: newPrice,
-      trend: newTrend,
-      history: [...stock.history.slice(-29), newPrice] // Keep last 30 prices
-    };
-  });
-};
-
-const initialLuxuryItems: LuxuryItem[] = generateLuxuryItems();
+  // Yachts
+  { id: 'yacht', name: 'Luxury Yacht', price: 2000000, diamondPrice: 10000, category: 'yacht', image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=300&fit=crop', description: 'Sail the seas in luxury', unlocked: false, owned: false },
+  { id: 'mega-yacht', name: 'Mega Yacht', price: 8000000, diamondPrice: 40000, category: 'yacht', image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop', description: 'Ultimate floating palace', unlocked: false, owned: false },
+  { id: 'sailing-yacht', name: 'Racing Sailboat', price: 500000, diamondPrice: 2500, category: 'yacht', image: 'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400&h=300&fit=crop', description: 'High-performance sailing yacht', unlocked: false, owned: false },
+  { id: 'motor-yacht', name: 'Sport Yacht', price: 1500000, diamondPrice: 1000, category: 'yacht', image: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=400&h=300&fit=crop', description: 'Fast motor yacht', unlocked: false, owned: false },
+  
+  // Jets
+  { id: 'private-jet', name: 'Private Jet', price: 15000000, diamondPrice: 75000, category: 'jet', image: 'https://images.unsplash.com/photo-1487887235947-a955ef187fcc?w=400&h=300&fit=crop', description: 'Fly anywhere in the world', unlocked: false, owned: false },
+  { id: 'helicopter', name: 'Luxury Helicopter', price: 3000000, diamondPrice: 15000, category: 'jet', image: 'https://images.unsplash.com/photo-1541891174-c581b8eed6bd?w=400&h=300&fit=crop', description: 'Personal helicopter transport', unlocked: false, owned: false },
+  
+  // Gadgets & Electronics
+  { id: 'luxury-phone', name: 'Diamond Phone', price: 50000, diamondPrice: 250, category: 'gadget', image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=300&fit=crop', description: 'Ultimate luxury smartphone', unlocked: true, owned: false },
+  { id: 'smart-watch', name: 'Platinum Smartwatch', price: 25000, diamondPrice: 125, category: 'gadget', image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop', description: 'Luxury smartwatch with platinum case', unlocked: true, owned: false },
+  { id: 'gaming-setup', name: 'Ultimate Gaming Rig', price: 15000, diamondPrice: 75, category: 'electronics', image: 'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400&h=300&fit=crop', description: 'Top-tier gaming computer setup', unlocked: true, owned: false },
+  { id: 'home-theater', name: 'Home Theater System', price: 100000, diamondPrice: 500, category: 'electronics', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop', description: 'Cinema-quality home theater', unlocked: false, owned: false },
+  
+  // Jewelry
+  { id: 'diamond-ring', name: 'Diamond Ring', price: 75000, diamondPrice: 375, category: 'jewelry', image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&h=300&fit=crop', description: 'Stunning diamond ring', unlocked: false, owned: false },
+  { id: 'gold-watch', name: 'Gold Rolex', price: 150000, diamondPrice: 750, category: 'jewelry', image: 'https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=400&h=300&fit=crop', description: 'Classic gold luxury watch', unlocked: false, owned: false },
+  { id: 'pearl-necklace', name: 'Pearl Necklace', price: 30000, diamondPrice: 150, category: 'jewelry', image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=300&fit=crop', description: 'Elegant pearl necklace', unlocked: false, owned: false },
+  
+  // Art & Collectibles
+  { id: 'painting', name: 'Famous Painting', price: 500000, diamondPrice: 2500, category: 'art', image: 'https://images.unsplash.com/photo-1578321272176-b7bbc0679853?w=400&h=300&fit=crop', description: 'Masterpiece artwork', unlocked: false, owned: false },
+  { id: 'sculpture', name: 'Modern Sculpture', price: 200000, diamondPrice: 1000, category: 'art', image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop', description: 'Contemporary art sculpture', unlocked: false, owned: false },
+  
+  // Fashion
+  { id: 'designer-suit', name: 'Designer Suit', price: 8000, diamondPrice: 40, category: 'fashion', image: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400&h=300&fit=crop', description: 'Bespoke designer suit', unlocked: true, owned: false },
+  { id: 'luxury-shoes', name: 'Luxury Shoes', price: 3000, diamondPrice: 15, category: 'fashion', image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=300&fit=crop', description: 'Handcrafted luxury footwear', unlocked: true, owned: false },
+  
+  // More Cars
+  { id: 'race-car', name: 'Formula 1 Car', price: 2000000, diamondPrice: 10000, category: 'car', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop', description: 'Professional racing car', unlocked: false, owned: false },
+  { id: 'limousine', name: 'Stretch Limousine', price: 180000, diamondPrice: 750, category: 'car', image: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=300&fit=crop', description: 'Luxury stretch limousine', unlocked: false, owned: false },
+  
+  // More Houses
+  { id: 'skyscraper', name: 'Private Skyscraper', price: 50000000, diamondPrice: 250000, category: 'house', image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=300&fit=crop', description: 'Your own skyscraper building', unlocked: false, owned: false },
+  { id: 'island', name: 'Private Island', price: 25000000, diamondPrice: 125000, category: 'house', image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&h=300&fit=crop', description: 'Tropical private island', unlocked: false, owned: false },
+  
+  // More Gadgets
+  { id: 'robot', name: 'Personal Robot', price: 85000, diamondPrice: 400, category: 'gadget', image: 'https://images.unsplash.com/photo-1485827235947-a955ef187fcc?w=400&h=300&fit=crop', description: 'AI-powered personal assistant robot', unlocked: false, owned: false },
+  { id: 'drone', name: 'Professional Drone', price: 15000, diamondPrice: 75, category: 'gadget', image: 'https://images.unsplash.com/photo-1507582020474-9a35b7d455d9?w=400&h=300&fit=crop', description: 'High-end camera drone', unlocked: true, owned: false },
+  
+  // More Jewelry
+  { id: 'emerald-earrings', name: 'Emerald Earrings', price: 45000, diamondPrice: 225, category: 'jewelry', image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&h=300&fit=crop', description: 'Exquisite emerald earrings', unlocked: false, owned: false },
+  { id: 'sapphire-bracelet', name: 'Sapphire Bracelet', price: 65000, diamondPrice: 325, category: 'jewelry', image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=300&fit=crop', description: 'Beautiful sapphire bracelet', unlocked: false, owned: false },
+  
+  // Unique Items
+  { id: 'space-ticket', name: 'Space Tourism Ticket', price: 1000000, diamondPrice: 5000, category: 'gadget', image: 'https://images.unsplash.com/photo-1446776877081-d282a0f896e2?w=400&h=300&fit=crop', description: 'Trip to space', unlocked: false, owned: false },
+  { id: 'submarine', name: 'Personal Submarine', price: 5000000, diamondPrice: 25000, category: 'yacht', image: 'https://images.unsplash.com/photo-1554629947-334ff61d85dc?w=400&h=300&fit=crop', description: 'Explore the ocean depths', unlocked: false, owned: false },
+  { id: 'wine-collection', name: 'Vintage Wine Collection', price: 500000, diamondPrice: 2500, category: 'art', image: 'https://images.unsplash.com/photo-1506377585622-bedcbb027afc?w=400&h=300&fit=crop', description: 'Rare vintage wine collection', unlocked: false, owned: false },
+  { id: 'race-horse', name: 'Champion Race Horse', price: 750000, diamondPrice: 3750, category: 'gadget', image: 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?w=400&h=300&fit=crop', description: 'Prize-winning thoroughbred', unlocked: false, owned: false },
+  { id: 'gold-bars', name: 'Gold Bar Collection', price: 300000, diamondPrice: 1500, category: 'jewelry', image: 'https://images.unsplash.com/photo-1610375461369-d58a2b7621b8?w=400&h=300&fit=crop', description: 'Pure gold investment bars', unlocked: false, owned: false },
+  
+  // High-End Electronics
+  { id: 'hologram-display', name: 'Holographic Display', price: 250000, diamondPrice: 1250, category: 'electronics', image: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=300&fit=crop', description: 'Futuristic hologram technology', unlocked: false, owned: false },
+  { id: 'quantum-computer', name: 'Quantum Computer', price: 10000000, diamondPrice: 50000, category: 'electronics', image: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=300&fit=crop', description: 'Next-generation quantum computing', unlocked: false, owned: false },
+  
+  // More Fashion
+  { id: 'designer-dress', name: 'Couture Gown', price: 25000, diamondPrice: 125, category: 'fashion', image: 'https://images.unsplash.com/photo-1566479179817-c5c24ba41eaa?w=400&h=300&fit=crop', description: 'High-fashion designer gown', unlocked: false, owned: false },
+  { id: 'fur-coat', name: 'Luxury Fur Coat', price: 40000, diamondPrice: 200, category: 'fashion', image: 'https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?w=400&h=300&fit=crop', description: 'Premium fur coat', unlocked: false, owned: false },
+  
+  // Entertainment
+  { id: 'concert-hall', name: 'Private Concert Hall', price: 15000000, diamondPrice: 75000, category: 'house', image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop', description: 'Your own concert venue', unlocked: false, owned: false },
+  { id: 'sports-team', name: 'Sports Team Ownership', price: 100000000, diamondPrice: 500000, category: 'art', image: 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=400&h=300&fit=crop', description: 'Own a professional sports team', unlocked: false, owned: false },
+  
+  // Ultimate Luxury
+  { id: 'golden-toilet', name: 'Golden Toilet', price: 500000, diamondPrice: 2500, category: 'house', image: 'https://images.unsplash.com/photo-1620626011761-996317b8d101?w=400&h=300&fit=crop', description: 'Solid gold bathroom fixture', unlocked: false, owned: false },
+  { id: 'time-machine', name: 'Time Machine', price: 1000000000, diamondPrice: 5000000, category: 'gadget', image: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=300&fit=crop', description: 'Travel through time (fictional)', unlocked: false, owned: false },
+];
 
 const initialState: GameState = {
   money: 10000,
@@ -298,7 +246,42 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     case 'UPDATE_STOCK_PRICES': {
       return {
         ...state,
-        stocks: updateStockPrices(state.stocks)
+        stocks: state.stocks.map(stock => {
+          // Improved stock movement - more player-friendly with occasional dips
+          const volatility = Math.random();
+          let changePercent = 0;
+          
+          // 80% chance of positive movement (0% to +2.5%)
+          if (volatility < 0.8) {
+            changePercent = Math.random() * 0.025;
+          }
+          // 15% chance of small negative movement (-1.5% to 0%)
+          else if (volatility < 0.95) {
+            changePercent = -Math.random() * 0.015;
+          }
+          // 5% chance of bigger movement (-3% to +4%)
+          else {
+            changePercent = (Math.random() - 0.3) * 0.07;
+          }
+          
+          // Small positive bias
+          changePercent += 0.001;
+          
+          const change = stock.price * changePercent;
+          const newPrice = Math.max(1, stock.price + change);
+          const newHistory = [...stock.history.slice(-29), newPrice];
+          
+          let trend: 'up' | 'down' | 'neutral' = 'neutral';
+          if (changePercent > 0.008) trend = 'up';
+          else if (changePercent < -0.008) trend = 'down';
+          
+          return {
+            ...stock,
+            price: Number(newPrice.toFixed(2)),
+            history: newHistory,
+            trend
+          };
+        })
       };
     }
     
@@ -385,9 +368,12 @@ function gameReducer(state: GameState, action: GameAction): GameState {
   }
 }
 
-const GameContext = createContext<GameContextType | undefined>(undefined);
+const GameContext = createContext<{
+  state: GameState;
+  dispatch: React.Dispatch<GameAction>;
+} | null>(null);
 
-const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(gameReducer, initialState);
   
   // Update stock prices every 2 seconds for more dynamic feel

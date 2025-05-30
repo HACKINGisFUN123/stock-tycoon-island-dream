@@ -55,13 +55,15 @@ const MarketScreen: React.FC = () => {
             className="bg-slate-800 border-slate-600 text-white hover:bg-slate-700 transition-all duration-300 hover:scale-105"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            חזרה
+            Back
           </Button>
           
-          <div className="text-center flex-1">
-            <h1 className="text-2xl font-bold text-white">שוק המניות</h1>
-            <p className="text-gray-400">בחר מניה לסחר</p>
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-white">Stock Market</h1>
+            <p className="text-gray-400">Choose a stock to trade</p>
           </div>
+          
+          <div className="w-20" />
         </div>
         
         <div className="grid gap-4">
@@ -109,11 +111,11 @@ const MarketScreen: React.FC = () => {
                   {holding && (
                     <div className="border-t border-slate-600 pt-3">
                       <div className="flex justify-between text-sm text-gray-300">
-                        <span>מניות: {holding.shares}</span>
-                        <span>ערך: {formatMoney(portfolioValue)}</span>
+                        <span>Shares: {holding.shares}</span>
+                        <span>Value: {formatMoney(portfolioValue)}</span>
                       </div>
                       <div className="text-xs text-gray-400 mt-1">
-                        מחיר ממוצע: {formatMoney(holding.avgBuyPrice)}
+                        Avg. Buy: {formatMoney(holding.avgBuyPrice)}
                       </div>
                     </div>
                   )}
