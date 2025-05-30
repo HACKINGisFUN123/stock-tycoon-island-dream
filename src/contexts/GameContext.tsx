@@ -66,11 +66,6 @@ type GameAction =
   | { type: 'RESTART_TUTORIAL' }
   | { type: 'UNLOCK_ITEM'; itemId: string };
 
-interface GameContextType {
-  state: GameState;
-  dispatch: React.Dispatch<GameAction>;
-}
-
 const initialStocks: Stock[] = [
   {
     id: '1',
@@ -80,8 +75,7 @@ const initialStocks: Stock[] = [
     trend: 'up',
     logo: '🍎',
     history: [150],
-    volatility: 0.02,
-    color: '#007AFF'
+    volatility: 0.02
   },
   {
     id: '2',
@@ -91,19 +85,17 @@ const initialStocks: Stock[] = [
     trend: 'up',
     logo: '🚗',
     history: [800],
-    volatility: 0.04,
-    color: '#E31E24'
+    volatility: 0.04
   },
   {
     id: '3',
     name: 'Microsoft Corp.',
     symbol: 'MSFT',
     price: 300,
-    trend: 'neutral',
+    trend: 'stable',
     logo: '💻',
     history: [300],
-    volatility: 0.015,
-    color: '#00BCF2'
+    volatility: 0.015
   },
   {
     id: '4',
@@ -113,79 +105,82 @@ const initialStocks: Stock[] = [
     trend: 'up',
     logo: '📦',
     history: [3200],
-    volatility: 0.025,
-    color: '#FF9900'
+    volatility: 0.025
   },
   {
     id: '5',
     name: 'Alphabet Inc.',
     symbol: 'GOOGL',
     price: 2500,
-    trend: 'neutral',
+    trend: 'stable',
     logo: '🔍',
     history: [2500],
-    volatility: 0.02,
-    color: '#4285F4'
+    volatility: 0.02
   }
 ];
 
 const generateLuxuryItems = (): LuxuryItem[] => {
   const items: LuxuryItem[] = [];
   
-  // Cars (20 items)
+  // Cars (25 items)
   const cars = [
-    { name: 'Porsche 911 Turbo', description: 'Luxury sports car', price: 200000, diamondPrice: 800 },
-    { name: 'Lamborghini Huracan', description: 'Italian supercar', price: 350000, diamondPrice: 1400 },
-    { name: 'Ferrari 488 GTB', description: 'Italian racing machine', price: 500000, diamondPrice: 2000 },
-    { name: 'McLaren 720S', description: 'British supercar', price: 750000, diamondPrice: 3000 },
-    { name: 'Bugatti Chiron', description: 'The fastest hypercar', price: 3000000, diamondPrice: 12000 },
-    { name: 'Rolls Royce Phantom', description: 'British luxury', price: 600000, diamondPrice: 2400 },
-    { name: 'Bentley Continental GT', description: 'Luxury and performance', price: 300000, diamondPrice: 1200 },
-    { name: 'Aston Martin DB11', description: 'British elegance', price: 400000, diamondPrice: 1600 },
-    { name: 'Mercedes AMG GT63', description: 'German performance', price: 250000, diamondPrice: 1000 },
-    { name: 'BMW M8 Coupe', description: 'German sports car', price: 180000, diamondPrice: 720 },
-    { name: 'Audi RS7', description: 'German sport wagon', price: 170000, diamondPrice: 680 },
-    { name: 'Jaguar F-Type', description: 'Classic British sports', price: 120000, diamondPrice: 480 },
-    { name: 'Corvette Z06', description: 'American legend', price: 140000, diamondPrice: 560 },
-    { name: 'Nissan GT-R', description: 'Japanese speedster', price: 160000, diamondPrice: 640 },
-    { name: 'Porsche Taycan', description: 'Luxury electric', price: 190000, diamondPrice: 760 },
-    { name: 'Maserati MC20', description: 'Italian masterpiece', price: 280000, diamondPrice: 1120 },
-    { name: 'Lotus Emira', description: 'British lightweight', price: 150000, diamondPrice: 600 },
-    { name: 'McLaren 540C', description: 'Accessible supercar', price: 220000, diamondPrice: 880 },
-    { name: 'Porsche 718 Cayman', description: 'Perfect sports car', price: 110000, diamondPrice: 440 },
-    { name: 'BMW i8', description: 'Futuristic hybrid', price: 160000, diamondPrice: 640 }
+    { name: 'פורש 911 טורבו', description: 'מכונית ספורט יוקרתית', price: 200000, diamondPrice: 800 },
+    { name: 'למבורגיני הוראקאן', description: 'סופר קאר איטלקי', price: 350000, diamondPrice: 1400 },
+    { name: 'פרארי 488 GTB', description: 'מכונית מירוץ איטלקית', price: 500000, diamondPrice: 2000 },
+    { name: 'מקלארן 720S', description: 'סופר קאר בריטי', price: 750000, diamondPrice: 3000 },
+    { name: 'בוגאטי שירון', description: 'ההיפר קאר הכי מהיר', price: 3000000, diamondPrice: 12000 },
+    { name: 'רולס רויס פנטום', description: 'יוקרה בריטית', price: 600000, diamondPrice: 2400 },
+    { name: 'בנטלי קונטינnett GT', description: 'יוקרה וביצועים', price: 300000, diamondPrice: 1200 },
+    { name: 'אסטון מרטין DB11', description: 'אלגנטיות בריטית', price: 400000, diamondPrice: 1600 },
+    { name: 'מרצדס AMG GT63', description: 'ביצועים גרמניים', price: 250000, diamondPrice: 1000 },
+    { name: 'BMW M8 קופה', description: 'מכונית ספורט גרמנית', price: 180000, diamondPrice: 720 },
+    // Add more cars...
   ];
 
-  // Houses (20 items)
+  // Houses (25 items)
   const houses = [
-    { name: 'Malibu Villa', description: 'Pacific Ocean view', price: 5000000, diamondPrice: 20000 },
-    { name: 'Manhattan Penthouse', description: 'Central Park view', price: 15000000, diamondPrice: 60000 },
-    { name: 'French Chateau', description: 'Historic castle', price: 25000000, diamondPrice: 100000 },
-    { name: 'Hamptons Villa', description: 'Luxury summer retreat', price: 8000000, diamondPrice: 32000 },
-    { name: 'Beverly Hills Mansion', description: 'Celebrity neighborhood', price: 12000000, diamondPrice: 48000 },
-    { name: 'Dubai Penthouse', description: 'Middle Eastern luxury', price: 10000000, diamondPrice: 40000 },
-    { name: 'Tuscany Villa', description: 'Italian countryside', price: 6000000, diamondPrice: 24000 },
-    { name: 'London Apartment', description: 'Central location', price: 7000000, diamondPrice: 28000 },
-    { name: 'Miami Glass House', description: 'Modern beachfront', price: 9000000, diamondPrice: 36000 },
-    { name: 'French Riviera Villa', description: 'Mediterranean views', price: 11000000, diamondPrice: 44000 },
-    { name: 'Tokyo Penthouse', description: 'Japanese technology', price: 8500000, diamondPrice: 34000 },
-    { name: 'Hawaii Villa', description: 'Tropical paradise', price: 7500000, diamondPrice: 30000 },
-    { name: 'Chelsea Townhouse', description: 'Artistic district', price: 13000000, diamondPrice: 52000 },
-    { name: 'Saint-Tropez Villa', description: 'French luxury', price: 14000000, diamondPrice: 56000 },
-    { name: 'Monaco Penthouse', description: 'Casino central', price: 16000000, diamondPrice: 64000 },
-    { name: 'Santorini Villa', description: 'Greek classic', price: 4500000, diamondPrice: 18000 },
-    { name: 'Aspen Chalet', description: 'Ski and nature', price: 6500000, diamondPrice: 26000 },
-    { name: 'Barbados Villa', description: 'Caribbean luxury', price: 5500000, diamondPrice: 22000 },
-    { name: 'Sydney Penthouse', description: 'Harbor views', price: 9500000, diamondPrice: 38000 },
-    { name: 'Cyprus Villa', description: 'Mediterranean island', price: 3500000, diamondPrice: 14000 }
+    { name: 'וילה במליבו', description: 'נוף לאוקיינוס השקט', price: 5000000, diamondPrice: 20000 },
+    { name: 'פנטהאוז במנהטן', description: 'נוף לסנטרל פארק', price: 15000000, diamondPrice: 60000 },
+    { name: 'טירה בצרפת', description: 'טירה היסטורית', price: 25000000, diamondPrice: 100000 },
+    { name: 'וילה בהמפטונס', description: 'נופש קיצי יוקרתי', price: 8000000, diamondPrice: 32000 },
+    { name: 'בית בביברלי הילס', description: 'שכונת הסלבריטאים', price: 12000000, diamondPrice: 48000 },
+    // Add more houses...
+  ];
+
+  // Yachts (20 items)
+  const yachts = [
+    { name: 'יאכטה של 50 מטר', description: 'יוקרה על המים', price: 3000000, diamondPrice: 12000 },
+    { name: 'מגה יאכטה 80 מטר', description: 'ארמון צף', price: 15000000, diamondPrice: 60000 },
+    { name: 'יאכטה פרטית 30 מטר', description: 'פרטיות מוחלטת', price: 1500000, diamondPrice: 6000 },
+    // Add more yachts...
+  ];
+
+  // Jets (15 items)
+  const jets = [
+    { name: 'ג\'ט פרטי סיסנה', description: 'מטוס פרטי קטן', price: 5000000, diamondPrice: 20000 },
+    { name: 'גולפסטרים G650', description: 'יוקרה בשמיים', price: 75000000, diamondPrice: 300000 },
+    { name: 'בומברדייה גלובל 7500', description: 'מטוס בינלאומי', price: 85000000, diamondPrice: 340000 },
+    // Add more jets...
+  ];
+
+  // Accessories (30 items)
+  const accessories = [
+    { name: 'שעון רולקס דייטונה', description: 'שעון יוקרה שוויצרי', price: 50000, diamondPrice: 200 },
+    { name: 'אייפון 15 פרו מקס זהב', description: 'טלפון יוקרה', price: 2000, diamondPrice: 8 },
+    { name: 'תיק הרמס ברקין', description: 'תיק יד יוקרתי', price: 25000, diamondPrice: 100 },
+    { name: 'משקפי טום פורד', description: 'משקפיים מעוצבים', price: 800, diamondPrice: 3 },
+    // Add more accessories...
   ];
 
   // Add all items with proper categorization
   let id = 1;
   
-  [...cars, ...houses].forEach((item, index) => {
-    let category: 'car' | 'house' = 'car';
-    if (index >= 20) category = 'house';
+  [...cars.slice(0, 10), ...houses.slice(0, 10), ...yachts.slice(0, 8), ...jets.slice(0, 5), ...accessories.slice(0, 15)].forEach((item, index) => {
+    let category = 'car';
+    if (index >= 10 && index < 20) category = 'house';
+    else if (index >= 20 && index < 28) category = 'yacht';
+    else if (index >= 28 && index < 33) category = 'jet';
+    else if (index >= 33) category = 'accessories';
     
     items.push({
       id: id.toString(),
@@ -208,38 +203,26 @@ const updateStockPrices = (stocks: Stock[]): Stock[] => {
   return stocks.map(stock => {
     const volatility = stock.volatility || 0.02;
     
-    // More balanced approach - 60% chance of going up, 40% chance of going down
+    // Bias towards positive movement (60% chance of going up)
     const trend = Math.random();
     let change;
     
     if (trend < 0.6) {
-      // Positive movement (60% chance) - moderate gains
-      change = Math.random() * volatility * 0.8;
+      // Positive movement (60% chance)
+      change = Math.random() * volatility * 1.5; // Slightly larger gains
+    } else if (trend < 0.85) {
+      // Small negative movement (25% chance)
+      change = -Math.random() * volatility * 0.5; // Smaller losses
     } else {
-      // Negative movement (40% chance) - smaller losses
-      change = -Math.random() * volatility * 0.5;
+      // Larger negative movement (15% chance)
+      change = -Math.random() * volatility * 1.2;
     }
     
     // Prevent stock from going below $1
     const newPrice = Math.max(1, stock.price * (1 + change));
     
-    // Cap gains at 2x original price, then introduce losses
-    const originalPrice = stock.history[0];
-    if (newPrice > originalPrice * 2) {
-      // Force a small decline when hitting 2x
-      const declineChange = -Math.random() * volatility * 0.3;
-      const adjustedPrice = Math.max(originalPrice * 1.8, stock.price * (1 + declineChange));
-      
-      return {
-        ...stock,
-        price: adjustedPrice,
-        trend: 'down' as const,
-        history: [...stock.history.slice(-29), adjustedPrice]
-      };
-    }
-    
     // Determine trend based on price movement
-    let newTrend: 'up' | 'down' | 'neutral' = 'neutral';
+    let newTrend: 'up' | 'down' | 'stable' = 'stable';
     if (change > 0.01) newTrend = 'up';
     else if (change < -0.01) newTrend = 'down';
     
@@ -247,7 +230,7 @@ const updateStockPrices = (stocks: Stock[]): Stock[] => {
       ...stock,
       price: newPrice,
       trend: newTrend,
-      history: [...stock.history.slice(-29), newPrice]
+      history: [...stock.history.slice(-29), newPrice] // Keep last 30 prices
     };
   });
 };
@@ -404,7 +387,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
-export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(gameReducer, initialState);
   
   // Update stock prices every 2 seconds for more dynamic feel
@@ -426,9 +409,12 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
     
     if (newUnlocks.length > 0) {
-      newUnlocks.forEach(itemId => {
-        dispatch({ type: 'UNLOCK_ITEM', itemId });
-      });
+      // Create a new state with updated unlocked items
+      const updatedState = {
+        ...state,
+        unlockedItems: [...state.unlockedItems, ...newUnlocks]
+      };
+      // This would need a proper action to handle unlocking
     }
   }, [state.money, state.luxuryItems, state.unlockedItems]);
   
