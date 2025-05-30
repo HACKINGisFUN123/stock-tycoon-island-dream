@@ -46,13 +46,13 @@ const MarketScreen: React.FC = () => {
   }
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <Button 
             onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'main-menu' })}
             variant="outline"
-            className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+            className="bg-slate-800 border-slate-600 text-white hover:bg-slate-700"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
@@ -60,10 +60,10 @@ const MarketScreen: React.FC = () => {
           
           <div className="text-center">
             <h1 className="text-2xl font-bold text-white">Stock Market</h1>
-            <p className="text-white/80">Cash: {formatMoney(state.money)}</p>
+            <p className="text-gray-400">Choose a stock to trade</p>
           </div>
           
-          <div className="w-20" /> {/* Spacer */}
+          <div className="w-20" />
         </div>
         
         <div className="grid gap-4">
@@ -75,9 +75,8 @@ const MarketScreen: React.FC = () => {
             return (
               <Card 
                 key={stock.id} 
-                className="bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/15 transition-all cursor-pointer"
+                className="bg-slate-800/50 backdrop-blur-md border-slate-600 hover:bg-slate-700/50 transition-all cursor-pointer hover:scale-[1.02]"
                 onClick={() => {
-                  // Store selected stock for trading screen
                   localStorage.setItem('selectedStockId', stock.id);
                   dispatch({ type: 'CHANGE_SCREEN', screen: 'trading' });
                 }}
@@ -86,7 +85,7 @@ const MarketScreen: React.FC = () => {
                   <div className="flex items-center justify-between mb-3">
                     <div>
                       <h3 className="text-lg font-semibold text-white">{stock.name}</h3>
-                      <p className="text-sm text-white/70">{stock.symbol}</p>
+                      <p className="text-sm text-gray-400">{stock.symbol}</p>
                     </div>
                     
                     <div className="text-right">
@@ -107,12 +106,12 @@ const MarketScreen: React.FC = () => {
                   </div>
                   
                   {holding && (
-                    <div className="border-t border-white/20 pt-3">
-                      <div className="flex justify-between text-sm text-white/80">
+                    <div className="border-t border-slate-600 pt-3">
+                      <div className="flex justify-between text-sm text-gray-300">
                         <span>Shares: {holding.shares}</span>
                         <span>Value: {formatMoney(portfolioValue)}</span>
                       </div>
-                      <div className="text-xs text-white/60 mt-1">
+                      <div className="text-xs text-gray-400 mt-1">
                         Avg. Buy: {formatMoney(holding.avgBuyPrice)}
                       </div>
                     </div>

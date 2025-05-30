@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
 export interface Stock {
@@ -40,6 +39,7 @@ interface GameState {
   musicEnabled: boolean;
   dailyRewardClaimed: boolean;
   loginStreak: number;
+  tutorialCompleted: boolean;
 }
 
 type GameAction = 
@@ -52,7 +52,8 @@ type GameAction =
   | { type: 'TOGGLE_MUSIC' }
   | { type: 'CLAIM_DAILY_REWARD' }
   | { type: 'ADD_MONEY'; amount: number }
-  | { type: 'RESET_GAME' };
+  | { type: 'RESET_GAME' }
+  | { type: 'COMPLETE_TUTORIAL' };
 
 const initialStocks: Stock[] = [
   // Tech Giants
@@ -94,7 +95,7 @@ const initialLuxuryItems: LuxuryItem[] = [
   { id: 'sports-car', name: 'Sports Car', price: 80000, category: 'car', image: 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=400&h=300&fit=crop', description: 'Fast and stylish sports car', unlocked: true, owned: false },
   { id: 'luxury-sedan', name: 'Luxury Sedan', price: 120000, category: 'car', image: 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=400&h=300&fit=crop', description: 'Premium luxury sedan', unlocked: false, owned: false },
   { id: 'supercar', name: 'Supercar', price: 300000, category: 'car', image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&h=300&fit=crop', description: 'Ultimate speed machine', unlocked: false, owned: false },
-  { id: 'hypercar', name: 'Hypercar', price: 800000, category: 'car', image: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=400&h=300&fit=crop', description: 'Cutting-edge hypercar', unlocked: false, owned: false },
+  { id: 'hypercar', name: 'Hypercar', price: 800000, category: 'car', image: 'https://images.unsplash.com/photo-1583121274602-3e2820c69886?w=400&h=300&fit=crop', description: 'Cutting-edge hypercar', unlocked: false, owned: false },
   { id: 'vintage-car', name: 'Vintage Classic', price: 250000, category: 'car', image: 'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?w=400&h=300&fit=crop', description: 'Timeless vintage automobile', unlocked: false, owned: false },
   { id: 'electric-car', name: 'Electric Supercar', price: 200000, category: 'car', image: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=400&h=300&fit=crop', description: 'Eco-friendly electric power', unlocked: false, owned: false },
   
@@ -144,7 +145,7 @@ const initialLuxuryItems: LuxuryItem[] = [
   { id: 'island', name: 'Private Island', price: 25000000, category: 'house', image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&h=300&fit=crop', description: 'Tropical private island', unlocked: false, owned: false },
   
   // More Gadgets
-  { id: 'robot', name: 'Personal Robot', price: 85000, category: 'gadget', image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&h=300&fit=crop', description: 'AI-powered personal assistant robot', unlocked: false, owned: false },
+  { id: 'robot', name: 'Personal Robot', price: 85000, category: 'gadget', image: 'https://images.unsplash.com/photo-1485827235947-a955ef187fcc?w=400&h=300&fit=crop', description: 'AI-powered personal assistant robot', unlocked: false, owned: false },
   { id: 'drone', name: 'Professional Drone', price: 15000, category: 'gadget', image: 'https://images.unsplash.com/photo-1507582020474-9a35b7d455d9?w=400&h=300&fit=crop', description: 'High-end camera drone', unlocked: true, owned: false },
   
   // More Jewelry
@@ -186,6 +187,7 @@ const initialState: GameState = {
   musicEnabled: true,
   dailyRewardClaimed: false,
   loginStreak: 1,
+  tutorialCompleted: false,
 };
 
 function gameReducer(state: GameState, action: GameAction): GameState {
@@ -233,34 +235,37 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       return {
         ...state,
         stocks: state.stocks.map(stock => {
-          // More dynamic price movement algorithm
+          // Improved stock movement - more balanced and player-friendly
           const volatility = Math.random();
           let changePercent = 0;
           
-          // 60% chance of normal movement (-3% to +3%)
-          if (volatility < 0.6) {
-            changePercent = (Math.random() - 0.5) * 0.06;
+          // 70% chance of small movement (-2% to +2%)
+          if (volatility < 0.7) {
+            changePercent = (Math.random() - 0.5) * 0.04;
           }
-          // 25% chance of bigger movement (-8% to +8%)
-          else if (volatility < 0.85) {
-            changePercent = (Math.random() - 0.5) * 0.16;
+          // 20% chance of medium movement (-5% to +5%)
+          else if (volatility < 0.9) {
+            changePercent = (Math.random() - 0.5) * 0.1;
           }
-          // 10% chance of major movement (-15% to +15%)
-          else if (volatility < 0.95) {
+          // 8% chance of big movement (-10% to +10%)
+          else if (volatility < 0.98) {
+            changePercent = (Math.random() - 0.5) * 0.2;
+          }
+          // 2% chance of major movement (-15% to +15%)
+          else {
             changePercent = (Math.random() - 0.5) * 0.3;
           }
-          // 5% chance of extreme movement (-25% to +25%)
-          else {
-            changePercent = (Math.random() - 0.5) * 0.5;
-          }
+          
+          // Add slight positive bias to make earning money more achievable
+          changePercent += 0.001;
           
           const change = stock.price * changePercent;
           const newPrice = Math.max(1, stock.price + change);
           const newHistory = [...stock.history.slice(-29), newPrice];
           
           let trend: 'up' | 'down' | 'neutral' = 'neutral';
-          if (changePercent > 0.02) trend = 'up';
-          else if (changePercent < -0.02) trend = 'down';
+          if (changePercent > 0.015) trend = 'up';
+          else if (changePercent < -0.015) trend = 'down';
           
           return {
             ...stock,
@@ -307,6 +312,9 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     
     case 'RESET_GAME':
       return initialState;
+    
+    case 'COMPLETE_TUTORIAL':
+      return { ...state, tutorialCompleted: true };
     
     default:
       return state;

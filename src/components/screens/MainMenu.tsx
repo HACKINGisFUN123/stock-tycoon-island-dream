@@ -3,7 +3,7 @@ import React from 'react';
 import { useGame } from '../../contexts/GameContext';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { TrendingUp, ShoppingBag, Package, Settings, HelpCircle, DollarSign } from 'lucide-react';
+import { TrendingUp, ShoppingBag, Package, Settings, HelpCircle, DollarSign, Play } from 'lucide-react';
 
 const MainMenu: React.FC = () => {
   const { state, dispatch } = useGame();
@@ -24,14 +24,19 @@ const MainMenu: React.FC = () => {
   const totalWealth = state.money + getTotalPortfolioValue();
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
       <div className="max-w-md mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Stock Tycoon</h1>
-          <p className="text-white/80">Build Your Financial Empire</p>
+        <div className="text-center mb-8 pt-8">
+          <div className="mb-4">
+            <div className="w-20 h-20 mx-auto bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center mb-4">
+              <TrendingUp className="w-10 h-10 text-white" />
+            </div>
+            <h1 className="text-4xl font-bold text-white mb-2">Stock Tycoon</h1>
+            <p className="text-gray-300">Build Your Financial Empire</p>
+          </div>
         </div>
         
-        <Card className="bg-white/10 backdrop-blur-md border-white/20 mb-6">
+        <Card className="bg-slate-800/50 backdrop-blur-md border-slate-600 mb-6">
           <CardHeader>
             <CardTitle className="text-white text-center">Your Wealth</CardTitle>
           </CardHeader>
@@ -39,7 +44,7 @@ const MainMenu: React.FC = () => {
             <div className="text-3xl font-bold text-green-400 mb-2">
               {formatMoney(totalWealth)}
             </div>
-            <div className="text-white/70 text-sm">
+            <div className="text-gray-400 text-sm">
               Cash: {formatMoney(state.money)} | Stocks: {formatMoney(getTotalPortfolioValue())}
             </div>
           </CardContent>
@@ -48,15 +53,15 @@ const MainMenu: React.FC = () => {
         <div className="space-y-4">
           <Button 
             onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'market' })}
-            className="w-full bg-green-500 hover:bg-green-600 text-white text-lg py-6"
+            className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-lg py-6"
           >
-            <TrendingUp className="w-6 h-6 mr-3" />
-            Trade Stocks
+            <Play className="w-6 h-6 mr-3" />
+            Start Trading
           </Button>
           
           <Button 
             onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'shop' })}
-            className="w-full bg-purple-500 hover:bg-purple-600 text-white text-lg py-6"
+            className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white text-lg py-6"
           >
             <ShoppingBag className="w-6 h-6 mr-3" />
             Luxury Shop
@@ -64,7 +69,7 @@ const MainMenu: React.FC = () => {
           
           <Button 
             onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'money-shop' })}
-            className="w-full bg-yellow-500 hover:bg-yellow-600 text-white text-lg py-6"
+            className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white text-lg py-6"
           >
             <DollarSign className="w-6 h-6 mr-3" />
             Get Money
@@ -72,7 +77,7 @@ const MainMenu: React.FC = () => {
           
           <Button 
             onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'inventory' })}
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white text-lg py-6"
+            className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-lg py-6"
           >
             <Package className="w-6 h-6 mr-3" />
             My Collection
@@ -82,7 +87,7 @@ const MainMenu: React.FC = () => {
             <Button 
               onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'settings' })}
               variant="outline"
-              className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+              className="bg-slate-800/50 border-slate-600 text-white hover:bg-slate-700"
             >
               <Settings className="w-4 h-4 mr-2" />
               Settings
@@ -91,7 +96,7 @@ const MainMenu: React.FC = () => {
             <Button 
               onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'help' })}
               variant="outline"
-              className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+              className="bg-slate-800/50 border-slate-600 text-white hover:bg-slate-700"
             >
               <HelpCircle className="w-4 h-4 mr-2" />
               Help

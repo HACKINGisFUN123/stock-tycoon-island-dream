@@ -9,6 +9,8 @@ import ShopScreen from './screens/ShopScreen';
 import MoneyShopScreen from './screens/MoneyShopScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import HelpScreen from './screens/HelpScreen';
+import TopBar from './TopBar';
+import Tutorial from './Tutorial';
 
 const GameRouter: React.FC = () => {
   const { state } = useGame();
@@ -36,9 +38,15 @@ const GameRouter: React.FC = () => {
     }
   };
   
+  const showTopBar = state.currentScreen !== 'main-menu';
+  
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700">
-      {renderScreen()}
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      {showTopBar && <TopBar />}
+      <div className={showTopBar ? 'pt-20' : ''}>
+        {renderScreen()}
+      </div>
+      {!state.tutorialCompleted && <Tutorial />}
     </div>
   );
 };
