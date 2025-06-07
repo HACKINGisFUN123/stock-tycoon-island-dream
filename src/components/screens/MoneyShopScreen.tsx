@@ -1,17 +1,14 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useGame } from '../../contexts/GameContext';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { ArrowLeft, DollarSign, Play, Gift, Star, Zap, Diamond, Crown } from 'lucide-react';
 import { useSoundEffects } from '../../hooks/useSoundEffects';
-import WheelOfFortune from '../WheelOfFortune';
 
 const MoneyShopScreen: React.FC = () => {
   const { state, dispatch } = useGame();
-  const { playButtonClick, playWindowOpen } = useSoundEffects();
-  const [showWheel, setShowWheel] = useState(false);
-  const [showPremiumWheel, setShowPremiumWheel] = useState(false);
+  const { playButtonClick } = useSoundEffects();
   
   const formatMoney = (amount: number) => {
     if (amount >= 1000000) return `$${(amount / 1000000).toFixed(1)}M`;
@@ -47,16 +44,6 @@ const MoneyShopScreen: React.FC = () => {
     playButtonClick();
     dispatch({ type: 'CHANGE_SCREEN', screen: 'main-menu' });
   };
-
-  const handleOpenWheel = () => {
-    playWindowOpen();
-    setShowWheel(true);
-  };
-
-  const handleOpenPremiumWheel = () => {
-    playWindowOpen();
-    setShowPremiumWheel(true);
-  };
   
   const adOffers = [
     { id: 'small-ad', reward: 500, description: 'Watch short ad', icon: Play },
@@ -76,8 +63,6 @@ const MoneyShopScreen: React.FC = () => {
     { diamondCost: 50, moneyAmount: 12000, description: 'Cash Bundle' },
     { diamondCost: 200, moneyAmount: 50000, description: 'Cash Chest' },
   ];
-
-  const canUseDailyWheel = !state.dailySpinUsed || state.lastSpinDate !== new Date().toDateString();
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-blue-900 to-purple-900 pt-20 p-4">
@@ -89,14 +74,14 @@ const MoneyShopScreen: React.FC = () => {
             className="bg-white/10 border-white/30 text-white hover:bg-white/20 transition-all duration-300 hover:scale-105"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
+            Back to Menu
           </Button>
           
           <div className="text-center">
             <h1 className="text-xl font-bold text-white">Money Shop</h1>
             <div className="flex items-center gap-4 text-white/80 text-sm">
               <div className="flex items-center gap-1">
-                <span className="text-lg">💰</span>
+                <span className="text-lg">🪙</span>
                 {formatMoney(state.money)}
               </div>
               <div className="flex items-center gap-1">
@@ -106,66 +91,34 @@ const MoneyShopScreen: React.FC = () => {
             </div>
           </div>
           
-          <div className="w-16" />
+          <div className="w-20" />
         </div>
         
-        <div className="space-y-4">
-          {/* Lucky Wheel Section */}
-          <Card className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-md border-purple-400/30">
+        <div className="space-y-6">
+          {/* Convert Diamonds to Money */}
+          <Card className="bg-gradient-to-r from-blue-600/20 to-cyan-600/20 backdrop-blur-md border-blue-400/50 shadow-lg">
             <CardHeader className="pb-3">
-              <CardTitle className="text-purple-400 flex items-center gap-2 text-lg">
-                <Star className="w-5 h-5" />
-                Lucky Wheel
+              <CardTitle className="text-blue-300 flex items-center gap-2 text-lg">
+                <Diamond className="w-5 h-5" />
+                Convert Diamonds to Cash
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button
-                onClick={handleOpenWheel}
-                disabled={!canUseDailyWheel}
-                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 transition-all duration-300 hover:scale-105"
-              >
-                <Gift className="w-4 h-4 mr-2" />
-                {canUseDailyWheel ? 'Spin Lucky Wheel (FREE)' : 'Come Back Tomorrow'}
-              </Button>
-              
-              {!canUseDailyWheel && (
-                <Button
-                  onClick={() => handleSpendDiamondsForMoney(10, 0)}
-                  disabled={state.diamonds < 10}
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 transition-all duration-300 hover:scale-105"
-                >
-                  <Diamond className="w-4 h-4 mr-2" />
-                  Extra Spin - 10 💎
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Convert Diamonds to Money */}
-          <Card className="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 backdrop-blur-md border-blue-400/30">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-blue-400 flex items-center gap-2 text-lg">
-                <Diamond className="w-5 h-5" />
-                Convert Diamonds
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
               {diamondToMoneyOffers.map((offer, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-white/10 rounded-lg backdrop-blur-sm border border-white/20">
+                <div key={index} className="flex items-center justify-between p-4 bg-white/10 rounded-lg backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
-                      <span className="text-sm">💎</span>
+                    <div className="w-10 h-10 bg-blue-500/30 rounded-full flex items-center justify-center">
+                      <span className="text-lg">💰</span>
                     </div>
                     <div>
-                      <div className="text-white font-semibold text-sm">{formatMoney(offer.moneyAmount)}</div>
-                      <div className="text-white/70 text-xs">{offer.description}</div>
+                      <div className="text-white font-bold text-base">{formatMoney(offer.moneyAmount)}</div>
+                      <div className="text-blue-200 text-sm">{offer.description}</div>
                     </div>
                   </div>
                   <Button
                     onClick={() => handleSpendDiamondsForMoney(offer.diamondCost, offer.moneyAmount)}
                     disabled={state.diamonds < offer.diamondCost}
-                    size="sm"
-                    className="bg-blue-500 hover:bg-blue-600 text-white transition-all duration-300 hover:scale-105"
+                    className="bg-blue-500 hover:bg-blue-600 text-white transition-all duration-300 hover:scale-105 disabled:opacity-50 px-4 py-2"
                   >
                     {offer.diamondCost} 💎
                   </Button>
@@ -175,33 +128,32 @@ const MoneyShopScreen: React.FC = () => {
           </Card>
           
           {/* Free Money - Watch Ads */}
-          <Card className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 backdrop-blur-md border-green-400/30">
+          <Card className="bg-gradient-to-r from-green-600/20 to-emerald-600/20 backdrop-blur-md border-green-400/50 shadow-lg">
             <CardHeader className="pb-3">
-              <CardTitle className="text-green-400 flex items-center gap-2 text-lg">
+              <CardTitle className="text-green-300 flex items-center gap-2 text-lg">
                 <Gift className="w-5 h-5" />
-                Watch Ads for Money
+                Watch Ads for Free Money
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2">
+            <CardContent className="space-y-3">
               {adOffers.map((offer) => {
                 const Icon = offer.icon;
                 return (
-                  <div key={offer.id} className="flex items-center justify-between p-3 bg-white/10 rounded-lg backdrop-blur-sm border border-white/20">
+                  <div key={offer.id} className="flex items-center justify-between p-4 bg-white/10 rounded-lg backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
-                        <Icon className="w-4 h-4 text-green-400" />
+                      <div className="w-10 h-10 bg-green-500/30 rounded-full flex items-center justify-center">
+                        <Icon className="w-5 h-5 text-green-400" />
                       </div>
                       <div>
-                        <div className="text-white font-semibold text-sm">{formatMoney(offer.reward)}</div>
-                        <div className="text-white/70 text-xs">{offer.description}</div>
+                        <div className="text-white font-bold text-base">{formatMoney(offer.reward)}</div>
+                        <div className="text-green-200 text-sm">{offer.description}</div>
                       </div>
                     </div>
                     <Button
                       onClick={() => handleWatchAd(offer.reward)}
-                      size="sm"
-                      className="bg-green-500 hover:bg-green-600 text-white transition-all duration-300 hover:scale-105"
+                      className="bg-green-500 hover:bg-green-600 text-white transition-all duration-300 hover:scale-105 px-4 py-2"
                     >
-                      <Play className="w-3 h-3 mr-1" />
+                      <Play className="w-4 h-4 mr-1" />
                       Watch
                     </Button>
                   </div>
@@ -211,44 +163,43 @@ const MoneyShopScreen: React.FC = () => {
           </Card>
           
           {/* Purchase Money */}
-          <Card className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 backdrop-blur-md border-yellow-400/30">
+          <Card className="bg-gradient-to-r from-yellow-600/20 to-orange-600/20 backdrop-blur-md border-yellow-400/50 shadow-lg">
             <CardHeader className="pb-3">
-              <CardTitle className="text-yellow-400 flex items-center gap-2 text-lg">
+              <CardTitle className="text-yellow-300 flex items-center gap-2 text-lg">
                 <DollarSign className="w-5 h-5" />
-                Buy Money
+                Premium Money Packs
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2">
+            <CardContent className="space-y-3">
               {moneyOffers.map((offer) => {
                 const Icon = offer.icon;
                 return (
-                  <div key={offer.id} className={`relative flex items-center justify-between p-3 rounded-lg backdrop-blur-sm border transition-all duration-300 hover:scale-[1.02] ${
+                  <div key={offer.id} className={`relative flex items-center justify-between p-4 rounded-lg backdrop-blur-sm border transition-all duration-300 hover:scale-[1.02] ${
                     offer.popular 
-                      ? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-yellow-400/50' 
-                      : 'bg-white/10 border-white/20'
+                      ? 'bg-gradient-to-r from-yellow-500/30 to-orange-500/30 border-yellow-400/70 shadow-lg' 
+                      : 'bg-white/10 border-white/20 hover:bg-white/20'
                   }`}>
                     {offer.popular && (
-                      <div className="absolute -top-1 -right-1 bg-yellow-500 text-black text-xs font-bold px-2 py-0.5 rounded-full">
+                      <div className="absolute -top-2 -right-2 bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-full shadow-lg">
                         POPULAR
                       </div>
                     )}
                     <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                        offer.popular ? 'bg-yellow-500/20' : 'bg-yellow-500/20'
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                        offer.popular ? 'bg-yellow-500/40' : 'bg-yellow-500/30'
                       }`}>
-                        <Icon className={`w-4 h-4 ${offer.popular ? 'text-yellow-400' : 'text-yellow-400'}`} />
+                        <Icon className={`w-5 h-5 ${offer.popular ? 'text-yellow-300' : 'text-yellow-400'}`} />
                       </div>
                       <div>
-                        <div className="text-white font-semibold text-sm">{formatMoney(offer.amount)}</div>
-                        <div className="text-white/70 text-xs">{offer.description}</div>
+                        <div className="text-white font-bold text-base">{formatMoney(offer.amount)}</div>
+                        <div className="text-yellow-200 text-sm">{offer.description}</div>
                       </div>
                     </div>
                     <Button
                       onClick={() => handlePurchase(offer.amount, 'money')}
-                      size="sm"
-                      className={`transition-all duration-300 hover:scale-105 ${
+                      className={`transition-all duration-300 hover:scale-105 px-4 py-2 ${
                         offer.popular 
-                          ? 'bg-yellow-500 hover:bg-yellow-600 text-black font-bold' 
+                          ? 'bg-yellow-500 hover:bg-yellow-600 text-black font-bold shadow-lg' 
                           : 'bg-yellow-500 hover:bg-yellow-600 text-black'
                       }`}
                     >
@@ -261,9 +212,9 @@ const MoneyShopScreen: React.FC = () => {
           </Card>
 
           {/* Daily Bonus */}
-          <Card className="bg-gradient-to-r from-orange-500/20 to-red-500/20 backdrop-blur-md border-orange-400/30">
+          <Card className="bg-gradient-to-r from-orange-600/20 to-red-600/20 backdrop-blur-md border-orange-400/50 shadow-lg">
             <CardHeader className="pb-3">
-              <CardTitle className="text-orange-400 flex items-center gap-2 text-lg">
+              <CardTitle className="text-orange-300 flex items-center gap-2 text-lg">
                 <Gift className="w-5 h-5" />
                 Daily Bonus
               </CardTitle>
@@ -276,13 +227,13 @@ const MoneyShopScreen: React.FC = () => {
                       playButtonClick();
                       dispatch({ type: 'CLAIM_DAILY_REWARD' });
                     }}
-                    className="w-full bg-orange-500 hover:bg-orange-600 text-white transition-all duration-300 hover:scale-105 py-3"
+                    className="w-full bg-orange-500 hover:bg-orange-600 text-white transition-all duration-300 hover:scale-105 py-4 text-lg font-bold"
                   >
-                    <Gift className="w-4 h-4 mr-2" />
+                    <Gift className="w-5 h-5 mr-2" />
                     Claim {formatMoney(1000)} Daily Bonus
                   </Button>
                 ) : (
-                  <div className="text-white/70 p-3 bg-white/10 rounded-lg text-sm">
+                  <div className="text-white/70 p-4 bg-white/10 rounded-lg text-base">
                     Daily bonus claimed! Come back tomorrow.
                   </div>
                 )}
@@ -291,15 +242,6 @@ const MoneyShopScreen: React.FC = () => {
           </Card>
         </div>
       </div>
-
-      {/* Wheel Components */}
-      {showWheel && (
-        <WheelOfFortune onClose={() => setShowWheel(false)} />
-      )}
-      
-      {showPremiumWheel && (
-        <WheelOfFortune onClose={() => setShowPremiumWheel(false)} isPremium={true} />
-      )}
     </div>
   );
 };

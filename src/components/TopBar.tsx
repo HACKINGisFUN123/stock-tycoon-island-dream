@@ -39,23 +39,23 @@ const TopBar: React.FC = () => {
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-slate-700 px-4 py-3 shadow-2xl backdrop-blur-md">
+    <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-slate-900/95 via-slate-800/95 to-slate-900/95 border-b border-slate-700/50 px-3 py-2 shadow-2xl backdrop-blur-md">
       <div className="flex items-center justify-between max-w-full mx-auto">
         {/* Money Display - Left */}
         <Button
           onClick={handleMoneyShopClick}
-          className="flex items-center gap-2 bg-green-600/90 hover:bg-green-700 rounded-full px-4 py-2 border border-green-500 transition-all duration-300 hover:scale-105 shadow-lg"
+          className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 rounded-full px-3 py-1.5 border border-green-500/30 transition-all duration-300 hover:scale-105 shadow-lg min-w-0"
         >
-          <div className="text-2xl">💰</div>
-          <span className="text-white font-bold text-lg">
+          <div className="text-xl">🪙</div>
+          <span className="text-white font-bold text-sm">
             {formatMoney(state.money)}
           </span>
         </Button>
 
-        {/* Center - Net Worth */}
-        <div className="text-center">
+        {/* Center - Net Worth (smaller and optional) */}
+        <div className="text-center px-2 min-w-0 hidden sm:block">
           <div className="text-xs text-gray-400">Net Worth</div>
-          <div className="text-white font-bold text-sm">
+          <div className="text-white font-bold text-xs">
             {formatMoney(state.money + getTotalPortfolioValue())}
           </div>
         </div>
@@ -63,10 +63,10 @@ const TopBar: React.FC = () => {
         {/* Diamonds Display - Right */}
         <Button
           onClick={handleDiamondShopClick}
-          className="flex items-center gap-2 bg-purple-600/90 hover:bg-purple-700 rounded-full px-4 py-2 border border-purple-500 transition-all duration-300 hover:scale-105 shadow-lg"
+          className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 rounded-full px-3 py-1.5 border border-purple-500/30 transition-all duration-300 hover:scale-105 shadow-lg min-w-0"
         >
-          <div className="text-2xl">💎</div>
-          <span className="text-white font-bold text-lg">
+          <div className="text-xl">💎</div>
+          <span className="text-white font-bold text-sm">
             {formatDiamonds(state.diamonds)}
           </span>
         </Button>
