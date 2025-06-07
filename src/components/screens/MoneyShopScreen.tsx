@@ -1,14 +1,17 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useGame } from '../../contexts/GameContext';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { ArrowLeft, DollarSign, Play, Gift, Star, Zap, Diamond, Crown } from 'lucide-react';
 import { useSoundEffects } from '../../hooks/useSoundEffects';
+import WheelOfFortune from '../WheelOfFortune';
 
 const MoneyShopScreen: React.FC = () => {
   const { state, dispatch } = useGame();
   const { playButtonClick } = useSoundEffects();
+  const [showWheel, setShowWheel] = useState(false);
+  const [showPremiumWheel, setShowPremiumWheel] = useState(false);
   
   const formatMoney = (amount: number) => {
     if (amount >= 1000000) return `$${(amount / 1000000).toFixed(1)}M`;
@@ -44,6 +47,21 @@ const MoneyShopScreen: React.FC = () => {
     playButtonClick();
     dispatch({ type: 'CHANGE_SCREEN', screen: 'main-menu' });
   };
+
+  const handleSpinWheel = () => {
+    playButtonClick();
+    setShowWheel(true);
+  };
+
+  const handlePremiumWheelUpgrade = () => {
+    setShowWheel(false);
+    setShowPremiumWheel(true);
+  };
+
+  const handleBuyPremiumSpin = () => {
+    playButtonClick();
+    setShowPremiumWheel(true);
+  };
   
   const adOffers = [
     { id: 'small-ad', reward: 500, description: 'Watch short ad', icon: Play },
@@ -67,14 +85,14 @@ const MoneyShopScreen: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-blue-900 to-purple-900 pt-20 p-4">
       <div className="max-w-md mx-auto">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 relative z-50">
           <Button 
             onClick={handleBackClick}
             variant="outline"
             className="bg-white/10 border-white/30 text-white hover:bg-white/20 transition-all duration-300 hover:scale-105"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Menu
+            Back
           </Button>
           
           <div className="text-center">
@@ -95,6 +113,55 @@ const MoneyShopScreen: React.FC = () => {
         </div>
         
         <div className="space-y-6">
+          {/* Spin Wheels Section */}
+          <Card className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-md border-purple-400/50 shadow-lg">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-purple-300 flex items-center gap-2 text-lg">
+                <Star className="w-5 h-5" />
+                Lucky Spin Wheels
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {/* Regular Wheel */}
+              <div className="flex items-center justify-between p-4 bg-white/10 rounded-lg backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-purple-500/30 rounded-full flex items-center justify-center">
+                    <Star className="w-5 h-5 text-purple-400" />
+                  </div>
+                  <div>
+                    <div className="text-white font-bold text-base">Regular Wheel</div>
+                    <div className="text-purple-200 text-sm">1 Free Spin Daily</div>
+                  </div>
+                </div>
+                <Button
+                  onClick={handleSpinWheel}
+                  className="bg-purple-500 hover:bg-purple-600 text-white transition-all duration-300 hover:scale-105 px-4 py-2"
+                >
+                  Spin Now
+                </Button>
+              </div>
+
+              {/* Premium Wheel */}
+              <div className="flex items-center justify-between p-4 bg-gradient-to-r from-yellow-500/30 to-orange-500/30 rounded-lg backdrop-blur-sm border border-yellow-400/70 transition-all duration-300 hover:scale-[1.02]">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-yellow-500/40 rounded-full flex items-center justify-center">
+                    <Crown className="w-5 h-5 text-yellow-300" />
+                  </div>
+                  <div>
+                    <div className="text-white font-bold text-base">Premium Wheel</div>
+                    <div className="text-yellow-200 text-sm">Bigger Prizes!</div>
+                  </div>
+                </div>
+                <Button
+                  onClick={handleBuyPremiumSpin}
+                  className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold transition-all duration-300 hover:scale-105 px-4 py-2"
+                >
+                  $2.99
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Convert Diamonds to Money */}
           <Card className="bg-gradient-to-r from-blue-600/20 to-cyan-600/20 backdrop-blur-md border-blue-400/50 shadow-lg">
             <CardHeader className="pb-3">
@@ -242,6 +309,21 @@ const MoneyShopScreen: React.FC = () => {
           </Card>
         </div>
       </div>
+
+      {/* Wheel Components */}
+      {showWheel && (
+        <WheelOfFortune 
+          onClose={() => setShowWheel(false)} 
+          onPremiumUpgrade={handlePremiumWheelUpgrade}
+        />
+      )}
+      
+      {showPremiumWheel && (
+        <WheelOfFortune 
+          onClose={() => setShowPremiumWheel(false)} 
+          isPremium={true} 
+        />
+      )}
     </div>
   );
 };

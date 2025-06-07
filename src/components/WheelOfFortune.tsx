@@ -49,7 +49,7 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
     { type: 'diamonds', amount: 15, color: '#4c1d95', icon: '💎' },
     { type: 'money', amount: 300, color: '#065f46', icon: '💰' },
     { type: 'diamonds', amount: 7, color: '#7c2d12', icon: '💎' },
-    { type: 'money', amount: 5000, color: '#fbbf24', icon: '🎁' }, // Ultra rare
+    { type: 'money', amount: 5000, color: '#fbbf24', icon: '🎁' },
   ];
 
   const premiumPrizes: Prize[] = [
@@ -67,7 +67,7 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
     { type: 'diamonds', amount: 1250, color: '#78350f', icon: '💎' },
     { type: 'money', amount: 200000, color: '#451a03', icon: '💰' },
     { type: 'diamonds', amount: 2000, color: '#fbbf24', icon: '💎' },
-    { type: 'money', amount: 500000, color: '#ffd700', icon: '👑' }, // Jackpot
+    { type: 'money', amount: 500000, color: '#ffd700', icon: '👑' },
   ];
 
   const prizes = isPremium ? premiumPrizes : regularPrizes;
@@ -81,10 +81,10 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
     setShowConfetti(false);
     playSpinSound();
     
-    const spinAmount = Math.random() * 360 + 3600; // At least 10 full rotations
+    const spinAmount = Math.random() * 360 + 1800; // 5 full rotations minimum
     const finalRotation = rotation + spinAmount;
     const normalizedRotation = finalRotation % 360;
-    const selectedIndex = Math.floor((360 - normalizedRotation) / segmentAngle) % prizes.length;
+    const selectedIndex = Math.floor((360 - normalizedRotation + segmentAngle/2) / segmentAngle) % prizes.length;
     
     setRotation(finalRotation);
     
@@ -105,7 +105,7 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
       playWinSound();
       setShowConfetti(true);
       setSpinning(false);
-    }, 10000); // 10 second spin
+    }, 5000); // 5 second spin
   };
 
   const canSpin = !state.dailySpinUsed || isPremium;
@@ -137,7 +137,7 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
           <Button
             onClick={onClose}
             variant="ghost"
-            className="absolute top-2 right-2 w-8 h-8 p-0 text-gray-400 hover:text-white"
+            className="absolute top-2 right-2 w-8 h-8 p-0 text-gray-400 hover:text-white z-10"
           >
             <X className="w-4 h-4" />
           </Button>
@@ -176,7 +176,7 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
             
             {/* Wheel */}
             <div
-              className={`relative w-64 h-64 rounded-full border-4 shadow-2xl transition-transform duration-[10000ms] ease-out mx-auto mt-4 ${
+              className={`relative w-64 h-64 rounded-full border-4 shadow-2xl transition-transform duration-[5000ms] ease-out mx-auto mt-4 ${
                 isPremium ? 'border-yellow-400/50' : 'border-purple-400/50'
               }`}
               style={{
@@ -198,11 +198,11 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
                   {/* Divider line */}
                   <div className="absolute top-0 left-1/2 w-0.5 h-32 bg-white/70 transform -translate-x-0.5" />
                   
-                  {/* Prize content - rotates with wheel */}
+                  {/* Prize content - positioned in center of slice */}
                   <div
                     className="absolute text-white font-bold text-xs"
                     style={{
-                      top: '15px',
+                      top: '25px',
                       left: '50%',
                       transform: `translateX(-50%) rotate(${segmentAngle / 2}deg)`,
                       textAlign: 'center'

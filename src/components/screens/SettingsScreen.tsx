@@ -1,26 +1,55 @@
-
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useGame } from '../../contexts/GameContext';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Switch } from '../ui/switch';
 import { ArrowLeft, Volume2, VolumeX, Music, RotateCcw, AlertTriangle } from 'lucide-react';
+import { useSoundEffects } from '../../hooks/useSoundEffects';
 
 const SettingsScreen: React.FC = () => {
   const { state, dispatch } = useGame();
+  const { playButtonClick, startBackgroundMusic, stopBackgroundMusic } = useSoundEffects();
+  
+  useEffect(() => {
+    // Control background music based on settings
+    if (state.musicEnabled) {
+      startBackgroundMusic();
+    } else {
+      stopBackgroundMusic();
+    }
+  }, [state.musicEnabled, startBackgroundMusic, stopBackgroundMusic]);
   
   const handleReset = () => {
     if (window.confirm('Are you sure you want to reset all game progress? This cannot be undone!')) {
       dispatch({ type: 'RESET_GAME' });
     }
   };
+
+  const handleBackClick = () => {
+    if (state.soundEnabled) {
+      playButtonClick();
+    }
+    dispatch({ type: 'CHANGE_SCREEN', screen: 'main-menu' });
+  };
+
+  const handleSoundToggle = () => {
+    dispatch({ type: 'TOGGLE_SOUND' });
+    if (!state.soundEnabled) {
+      // Test sound when enabling
+      setTimeout(() => playButtonClick(), 100);
+    }
+  };
+
+  const handleMusicToggle = () => {
+    dispatch({ type: 'TOGGLE_MUSIC' });
+  };
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 pt-20 p-4">
       <div className="max-w-2xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 relative z-50">
           <Button 
-            onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'main-menu' })}
+            onClick={handleBackClick}
             variant="outline"
             className="bg-white/10 border-white/30 text-white hover:bg-white/20"
           >
@@ -58,7 +87,7 @@ const SettingsScreen: React.FC = () => {
                 </div>
                 <Switch 
                   checked={state.soundEnabled}
-                  onCheckedChange={() => dispatch({ type: 'TOGGLE_SOUND' })}
+                  onCheckedChange={handleSoundToggle}
                 />
               </div>
               
@@ -72,7 +101,7 @@ const SettingsScreen: React.FC = () => {
                 </div>
                 <Switch 
                   checked={state.musicEnabled}
-                  onCheckedChange={() => dispatch({ type: 'TOGGLE_MUSIC' })}
+                  onCheckedChange={handleMusicToggle}
                 />
               </div>
             </CardContent>
