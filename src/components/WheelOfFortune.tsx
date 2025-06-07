@@ -6,6 +6,20 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { X, Star, Diamond, DollarSign, Gift, Crown } from 'lucide-react';
 import { useSoundEffects } from '../hooks/useSoundEffects';
 
+interface Prize {
+  type: 'money' | 'diamonds';
+  amount: number;
+  color: string;
+  icon: string;
+}
+
+interface WheelResult {
+  type: 'money' | 'diamonds';
+  amount: number;
+  index: number;
+  icon: string;
+}
+
 interface WheelOfFortuneProps {
   onClose: () => void;
   isPremium?: boolean;
@@ -16,9 +30,9 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
   const { playSpinSound, playWinSound } = useSoundEffects();
   const [spinning, setSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
-  const [result, setResult] = useState<{ type: 'money' | 'diamonds'; amount: number; index: number } | null>(null);
+  const [result, setResult] = useState<WheelResult | null>(null);
 
-  const regularPrizes = [
+  const regularPrizes: Prize[] = [
     { type: 'money', amount: 500, color: '#4ade80', icon: '💰' },
     { type: 'diamonds', amount: 5, color: '#a855f7', icon: '💎' },
     { type: 'money', amount: 1000, color: '#22c55e', icon: '💰' },
@@ -36,7 +50,7 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
     { type: 'money', amount: 10000, color: '#fbbf24', icon: '🎁' }, // Ultra rare
   ];
 
-  const premiumPrizes = [
+  const premiumPrizes: Prize[] = [
     { type: 'money', amount: 25000, color: '#fbbf24', icon: '💰' },
     { type: 'diamonds', amount: 250, color: '#f59e0b', icon: '💎' },
     { type: 'money', amount: 50000, color: '#f59e0b', icon: '💰' },
@@ -72,11 +86,16 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
     
     setTimeout(() => {
       const selectedPrize = prizes[selectedIndex];
-      setResult({ ...selectedPrize, index: selectedIndex });
+      setResult({ 
+        type: selectedPrize.type, 
+        amount: selectedPrize.amount, 
+        index: selectedIndex,
+        icon: selectedPrize.icon
+      });
       
       dispatch({ 
         type: 'DAILY_SPIN', 
-        reward: { type: selectedPrize.type as 'money' | 'diamonds', amount: selectedPrize.amount }
+        reward: { type: selectedPrize.type, amount: selectedPrize.amount }
       });
       
       playWinSound();
