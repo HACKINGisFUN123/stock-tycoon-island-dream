@@ -1,12 +1,19 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useGame } from '../../contexts/GameContext';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { TrendingUp, ShoppingBag, Package, Settings, HelpCircle, DollarSign, Play, Diamond } from 'lucide-react';
+import { TrendingUp, ShoppingBag, Package, Settings, HelpCircle, Play, DollarSign } from 'lucide-react';
+import { useSoundEffects } from '../../hooks/useSoundEffects';
 
 const MainMenu: React.FC = () => {
   const { state, dispatch } = useGame();
+  const { playButtonClick, startBackgroundMusic } = useSoundEffects();
+  
+  useEffect(() => {
+    // Start background music when entering main menu
+    startBackgroundMusic();
+  }, []);
   
   const formatMoney = (amount: number) => {
     if (amount >= 1000000) return `$${(amount / 1000000).toFixed(1)}M`;
@@ -22,9 +29,14 @@ const MainMenu: React.FC = () => {
   };
   
   const totalWealth = state.money + getTotalPortfolioValue();
+
+  const handleButtonClick = (screen: string) => {
+    playButtonClick();
+    dispatch({ type: 'CHANGE_SCREEN', screen });
+  };
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 animate-fade-in overflow-hidden">
+    <div className={`min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 animate-fade-in ${state.tutorialCompleted ? '' : 'overflow-hidden'}`}>
       <div className="max-w-md mx-auto">
         <div className="text-center mb-8 pt-8">
           <div className="mb-4">
@@ -46,11 +58,11 @@ const MainMenu: React.FC = () => {
             </div>
             <div className="flex items-center justify-center gap-4 text-gray-400 text-sm">
               <div className="flex items-center gap-1">
-                <DollarSign className="w-4 h-4 text-green-400" />
+                <span>💰</span>
                 Cash: {formatMoney(state.money)}
               </div>
               <div className="flex items-center gap-1">
-                <Diamond className="w-4 h-4 text-purple-400" />
+                <span>💎</span>
                 {state.diamonds}
               </div>
             </div>
@@ -62,7 +74,7 @@ const MainMenu: React.FC = () => {
         
         <div className="space-y-4">
           <Button 
-            onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'market' })}
+            onClick={() => handleButtonClick('market')}
             className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-lg py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in"
             style={{ animationDelay: '0.1s' }}
           >
@@ -71,7 +83,7 @@ const MainMenu: React.FC = () => {
           </Button>
           
           <Button 
-            onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'shop' })}
+            onClick={() => handleButtonClick('shop')}
             className="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white text-lg py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in"
             style={{ animationDelay: '0.2s' }}
           >
@@ -80,7 +92,7 @@ const MainMenu: React.FC = () => {
           </Button>
           
           <Button 
-            onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'money-shop' })}
+            onClick={() => handleButtonClick('money-shop')}
             className="w-full bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 text-white text-lg py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in"
             style={{ animationDelay: '0.3s' }}
           >
@@ -89,7 +101,7 @@ const MainMenu: React.FC = () => {
           </Button>
           
           <Button 
-            onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'inventory' })}
+            onClick={() => handleButtonClick('inventory')}
             className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white text-lg py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in"
             style={{ animationDelay: '0.4s' }}
           >
@@ -99,7 +111,7 @@ const MainMenu: React.FC = () => {
           
           <div className="grid grid-cols-2 gap-4 mt-6">
             <Button 
-              onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'settings' })}
+              onClick={() => handleButtonClick('settings')}
               variant="outline"
               className="bg-slate-800/50 border-slate-600 text-white hover:bg-slate-700 transition-all duration-300 hover:scale-105 animate-fade-in"
               style={{ animationDelay: '0.5s' }}
@@ -109,7 +121,7 @@ const MainMenu: React.FC = () => {
             </Button>
             
             <Button 
-              onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'help' })}
+              onClick={() => handleButtonClick('help')}
               variant="outline"
               className="bg-slate-800/50 border-slate-600 text-white hover:bg-slate-700 transition-all duration-300 hover:scale-105 animate-fade-in"
               style={{ animationDelay: '0.6s' }}
@@ -126,7 +138,7 @@ const MainMenu: React.FC = () => {
             <CardContent className="p-4 text-center">
               <div className="text-yellow-400 font-semibold mb-2">Daily Bonus Available!</div>
               <Button
-                onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'money-shop' })}
+                onClick={() => handleButtonClick('money-shop')}
                 className="bg-yellow-500 hover:bg-yellow-600 text-white transition-all duration-300 hover:scale-105"
               >
                 Claim $1,000

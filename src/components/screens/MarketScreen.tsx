@@ -2,12 +2,14 @@
 import React, { useState } from 'react';
 import { useGame } from '../../contexts/GameContext';
 import { Button } from '../ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Card, CardContent } from '../ui/card';
 import { ArrowLeft, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { useSoundEffects } from '../../hooks/useSoundEffects';
 import StockChart from '../StockChart';
 
 const MarketScreen: React.FC = () => {
   const { state, dispatch } = useGame();
+  const { playButtonClick } = useSoundEffects();
   const [selectedStock, setSelectedStock] = useState<string | null>(null);
   
   const formatMoney = (amount: number) => {
@@ -39,6 +41,17 @@ const MarketScreen: React.FC = () => {
     const previous = stock.history[stock.history.length - 2];
     return ((current - previous) / previous) * 100;
   };
+
+  const handleBackClick = () => {
+    playButtonClick();
+    dispatch({ type: 'CHANGE_SCREEN', screen: 'main-menu' });
+  };
+
+  const handleStockClick = (stockId: string) => {
+    playButtonClick();
+    localStorage.setItem('selectedStockId', stockId);
+    dispatch({ type: 'CHANGE_SCREEN', screen: 'trading' });
+  };
   
   if (selectedStock) {
     dispatch({ type: 'CHANGE_SCREEN', screen: 'trading' });
@@ -46,11 +59,11 @@ const MarketScreen: React.FC = () => {
   }
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4 overflow-hidden">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-20 p-4">
+      <div className="max-w-md mx-auto">
         <div className="flex items-center justify-between mb-6">
           <Button 
-            onClick={() => dispatch({ type: 'CHANGE_SCREEN', screen: 'main-menu' })}
+            onClick={handleBackClick}
             variant="outline"
             className="bg-slate-800 border-slate-600 text-white hover:bg-slate-700 transition-all duration-300 hover:scale-105"
           >
@@ -59,14 +72,14 @@ const MarketScreen: React.FC = () => {
           </Button>
           
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-white">Stock Market</h1>
-            <p className="text-gray-400">Choose a stock to trade</p>
+            <h1 className="text-xl font-bold text-white">Stock Market</h1>
+            <p className="text-gray-400 text-sm">Choose a stock to trade</p>
           </div>
           
-          <div className="w-20" />
+          <div className="w-16" />
         </div>
         
-        <div className="grid gap-4">
+        <div className="space-y-3">
           {state.stocks.map((stock) => {
             const holding = state.portfolio[stock.id];
             const priceChange = getPriceChange(stock);
@@ -76,25 +89,19 @@ const MarketScreen: React.FC = () => {
               <Card 
                 key={stock.id} 
                 className="bg-slate-800/50 backdrop-blur-md border-slate-600 hover:bg-slate-700/50 transition-all cursor-pointer hover:scale-[1.02] animate-fade-in"
-                onClick={() => {
-                  localStorage.setItem('selectedStockId', stock.id);
-                  dispatch({ type: 'CHANGE_SCREEN', screen: 'trading' });
-                }}
+                onClick={() => handleStockClick(stock.id)}
               >
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="text-2xl">{stock.logo}</div>
-                      <div>
-                        <h3 className="text-lg font-semibold text-white">{stock.name}</h3>
-                        <p className="text-sm text-gray-400">{stock.symbol}</p>
-                      </div>
+                    <div className="flex-1">
+                      <h3 className="text-base font-semibold text-white">{stock.name}</h3>
+                      <p className="text-sm text-gray-400">{stock.symbol}</p>
                     </div>
                     
                     <div className="text-right">
                       <div className="flex items-center gap-2">
                         {getTrendIcon(stock.trend)}
-                        <span className="text-xl font-bold text-white">
+                        <span className="text-lg font-bold text-white">
                           {formatMoney(stock.price)}
                         </span>
                       </div>
@@ -105,7 +112,7 @@ const MarketScreen: React.FC = () => {
                   </div>
                   
                   <div className="mb-3">
-                    <StockChart stock={stock} height={60} />
+                    <StockChart stock={stock} height={50} />
                   </div>
                   
                   {holding && (

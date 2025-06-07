@@ -3,124 +3,111 @@ import React, { useState } from 'react';
 import { useGame } from '../contexts/GameContext';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { X, ArrowRight, ArrowLeft, TrendingUp, ShoppingBag, Package } from 'lucide-react';
+import { ArrowRight, X, TrendingUp, ShoppingBag, DollarSign } from 'lucide-react';
+import { useSoundEffects } from '../hooks/useSoundEffects';
 
 const Tutorial: React.FC = () => {
-  const { dispatch } = useGame();
+  const { state, dispatch } = useGame();
+  const { playButtonClick, playWindowOpen } = useSoundEffects();
   const [currentStep, setCurrentStep] = useState(0);
 
   const tutorialSteps = [
     {
       title: "Welcome to Stock Tycoon!",
-      content: "Build your financial empire by trading stocks and buying luxury items. Let's learn the basics!",
+      content: "Build your financial empire by trading stocks and buying luxury items. Let's get started!",
       icon: <TrendingUp className="w-8 h-8 text-green-400" />
     },
     {
-      title: "Trading Stocks",
-      content: "Buy stocks when prices are low, sell when they're high. Use the +/- buttons to choose how many shares to buy or sell.",
+      title: "Your Money & Diamonds",
+      content: "💰 Money is earned through trading and can be spent on luxury items. 💎 Diamonds are premium currency for special features.",
+      icon: <DollarSign className="w-8 h-8 text-yellow-400" />
+    },
+    {
+      title: "Stock Trading",
+      content: "Buy low, sell high! Each stock has its own chart and trend. Start small and learn the market patterns.",
       icon: <TrendingUp className="w-8 h-8 text-blue-400" />
     },
     {
-      title: "Reading Charts",
-      content: "Green areas show rising prices (good time to sell), red areas show falling prices (good time to buy). Watch the trends!",
-      icon: <TrendingUp className="w-8 h-8 text-green-400" />
-    },
-    {
-      title: "Luxury Shop",
-      content: "Spend your profits on luxury items like cars, yachts, and houses. Items unlock as you get richer!",
+      title: "Luxury Shopping",
+      content: "Spend your profits on cars, houses, yachts and more! Items unlock as you earn more money.",
       icon: <ShoppingBag className="w-8 h-8 text-purple-400" />
     },
     {
-      title: "Your Collection",
-      content: "View all your purchased items in the inventory. Show off your wealth and track your progress!",
-      icon: <Package className="w-8 h-8 text-yellow-400" />
+      title: "Daily Rewards",
+      content: "Don't forget to claim your daily bonus and spin the Lucky Wheel for free prizes!",
+      icon: <DollarSign className="w-8 h-8 text-orange-400" />
     }
   ];
 
-  const nextStep = () => {
+  const handleNext = () => {
+    playButtonClick();
     if (currentStep < tutorialSteps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      closeTutorial();
+      dispatch({ type: 'COMPLETE_TUTORIAL' });
     }
   };
 
-  const prevStep = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
-  const closeTutorial = () => {
+  const handleSkip = () => {
+    playButtonClick();
     dispatch({ type: 'COMPLETE_TUTORIAL' });
   };
 
-  const step = tutorialSteps[currentStep];
+  if (state.tutorialCompleted) {
+    return null;
+  }
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 animate-fade-in">
-      <Card className="bg-slate-800 border-slate-600 max-w-md w-full animate-scale-in">
-        <CardHeader className="text-center">
-          <div className="flex items-center justify-between">
-            <div className="w-6"></div>
-            <div className="flex flex-col items-center">
-              <div className="transition-all duration-300 ease-in-out">
-                {step.icon}
-              </div>
-              <CardTitle className="text-white mt-2">{step.title}</CardTitle>
-            </div>
-            <Button
-              onClick={closeTutorial}
-              variant="ghost"
-              className="w-6 h-6 p-0 text-gray-400 hover:text-white transition-colors"
-            >
-              <X className="w-4 h-4" />
-            </Button>
+    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 animate-fade-in">
+      <Card className="max-w-md w-full bg-gradient-to-br from-slate-800 to-slate-900 border-slate-600 animate-scale-in">
+        <CardHeader className="text-center relative">
+          <Button
+            onClick={handleSkip}
+            variant="ghost"
+            className="absolute top-2 right-2 w-8 h-8 p-0 text-gray-400 hover:text-white"
+          >
+            <X className="w-4 h-4" />
+          </Button>
+          <div className="flex items-center justify-center mb-4">
+            {tutorialSteps[currentStep].icon}
           </div>
+          <CardTitle className="text-white text-xl">
+            {tutorialSteps[currentStep].title}
+          </CardTitle>
         </CardHeader>
+        
         <CardContent className="text-center">
           <p className="text-gray-300 mb-6 leading-relaxed">
-            {step.content}
+            {tutorialSteps[currentStep].content}
           </p>
           
-          <div className="flex items-center justify-between">
-            <Button
-              onClick={prevStep}
-              variant="outline"
-              className="bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
-              disabled={currentStep === 0}
-            >
-              <ArrowLeft className="w-4 h-4 mr-1" />
-              Back
-            </Button>
-            
-            <div className="text-sm text-gray-400">
-              Step {currentStep + 1} of {tutorialSteps.length}
-            </div>
-            
-            <Button
-              onClick={nextStep}
-              className="bg-blue-600 hover:bg-blue-700 text-white transition-colors"
-            >
-              {currentStep < tutorialSteps.length - 1 ? (
-                <>
-                  Next <ArrowRight className="w-4 h-4 ml-1" />
-                </>
-              ) : (
-                'Start Playing!'
-              )}
-            </Button>
-          </div>
-          
-          <div className="flex gap-1 justify-center mt-4">
+          <div className="flex items-center justify-center gap-2 mb-6">
             {tutorialSteps.map((_, index) => (
               <div
                 key={index}
-                className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
                   index === currentStep ? 'bg-blue-400' : 'bg-gray-600'
                 }`}
               />
             ))}
+          </div>
+          
+          <div className="flex gap-3">
+            <Button
+              onClick={handleSkip}
+              variant="outline"
+              className="flex-1 bg-transparent border-gray-600 text-gray-300 hover:bg-gray-700"
+            >
+              Skip Tutorial
+            </Button>
+            
+            <Button
+              onClick={handleNext}
+              className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white transition-all duration-300 hover:scale-105"
+            >
+              {currentStep === tutorialSteps.length - 1 ? 'Get Started' : 'Next'}
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
           </div>
         </CardContent>
       </Card>

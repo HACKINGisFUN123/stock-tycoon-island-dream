@@ -7,6 +7,7 @@ import TradingScreen from './screens/TradingScreen';
 import InventoryScreen from './screens/InventoryScreen';
 import ShopScreen from './screens/ShopScreen';
 import MoneyShopScreen from './screens/MoneyShopScreen';
+import DiamondShopScreen from './screens/DiamondShopScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import HelpScreen from './screens/HelpScreen';
 import TopBar from './TopBar';
@@ -29,6 +30,8 @@ const GameRouter: React.FC = () => {
         return <ShopScreen />;
       case 'money-shop':
         return <MoneyShopScreen />;
+      case 'diamond-shop':
+        return <DiamondShopScreen />;
       case 'settings':
         return <SettingsScreen />;
       case 'help':
@@ -41,9 +44,9 @@ const GameRouter: React.FC = () => {
   const showTopBar = state.currentScreen !== 'main-menu';
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       {showTopBar && <TopBar />}
-      <div className={`transition-all duration-300 ${showTopBar ? 'pt-20' : ''}`}>
+      <div className={`transition-all duration-300 ${showTopBar ? '' : ''}`}>
         {renderScreen()}
       </div>
       {!state.tutorialCompleted && <Tutorial />}
