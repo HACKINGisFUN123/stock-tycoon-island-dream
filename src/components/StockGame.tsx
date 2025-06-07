@@ -46,7 +46,7 @@ const GameRouter: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       {showTopBar && <TopBar />}
-      <div className={`transition-all duration-300 ${showTopBar ? '' : ''}`}>
+      <div className={`transition-all duration-300 ${showTopBar ? 'pt-0' : ''}`}>
         {renderScreen()}
       </div>
       {!state.tutorialCompleted && <Tutorial />}

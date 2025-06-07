@@ -14,7 +14,6 @@ const MainMenu: React.FC = () => {
   const [showPremiumWheel, setShowPremiumWheel] = useState(false);
   
   useEffect(() => {
-    // Start background music when entering main menu
     startBackgroundMusic();
   }, [startBackgroundMusic]);
   
@@ -49,7 +48,7 @@ const MainMenu: React.FC = () => {
   };
   
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 animate-fade-in ${state.tutorialCompleted ? '' : 'overflow-hidden'} pt-16`}>
+    <div className={`min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 animate-fade-in ${state.tutorialCompleted ? '' : 'overflow-hidden'}`}>
       <div className="max-w-md mx-auto">
         <div className="text-center mb-6 pt-4">
           <div className="mb-4">
@@ -84,6 +83,21 @@ const MainMenu: React.FC = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Daily Reward Notification - positioned right after wealth card */}
+        {!state.dailyRewardClaimed && (
+          <Card className="bg-yellow-500/20 backdrop-blur-md border-yellow-400/30 mb-4 animate-pulse">
+            <CardContent className="p-4 text-center">
+              <div className="text-yellow-400 font-semibold mb-2">Daily Bonus Available!</div>
+              <Button
+                onClick={() => handleButtonClick('money-shop')}
+                className="bg-yellow-500 hover:bg-yellow-600 text-white transition-all duration-300 hover:scale-105"
+              >
+                Claim $1,000
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Central Spin Wheel Button */}
         <Card className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-md border-purple-400/30 mb-6 animate-scale-in">
@@ -141,7 +155,7 @@ const MainMenu: React.FC = () => {
             My Collection
           </Button>
           
-          <div className="grid grid-cols-2 gap-4 mt-6">
+          <div className="grid grid-cols-2 gap-4 mt-6 pb-6">
             <Button 
               onClick={() => handleButtonClick('settings')}
               variant="outline"
@@ -163,21 +177,6 @@ const MainMenu: React.FC = () => {
             </Button>
           </div>
         </div>
-        
-        {/* Daily Reward Notification - positioned closer to content */}
-        {!state.dailyRewardClaimed && (
-          <Card className="bg-yellow-500/20 backdrop-blur-md border-yellow-400/30 mt-4 animate-pulse">
-            <CardContent className="p-4 text-center">
-              <div className="text-yellow-400 font-semibold mb-2">Daily Bonus Available!</div>
-              <Button
-                onClick={() => handleButtonClick('money-shop')}
-                className="bg-yellow-500 hover:bg-yellow-600 text-white transition-all duration-300 hover:scale-105"
-              >
-                Claim $1,000
-              </Button>
-            </CardContent>
-          </Card>
-        )}
       </div>
 
       {/* Wheel Components */}
