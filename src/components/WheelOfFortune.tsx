@@ -68,7 +68,7 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
     playSpinSound();
     
     // More rotations for better effect
-    const spinAmount = Math.random() * 360 + 2160; // 6+ full rotations
+    const spinAmount = Math.random() * 360 + 1800; // 5+ full rotations
     const finalRotation = rotation + spinAmount;
     const normalizedRotation = finalRotation % 360;
     const selectedIndex = Math.floor((360 - normalizedRotation + segmentAngle/2) / segmentAngle) % prizes.length;
@@ -191,6 +191,15 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
               ))}
             </div>
             
+            {/* Winning Pointer - Fixed at top */}
+            <div className="absolute top-1 left-1/2 transform -translate-x-1/2 z-20">
+              <div 
+                className={`w-0 h-0 border-l-6 border-r-6 border-b-12 border-l-transparent border-r-transparent ${
+                  isPremium ? 'border-b-yellow-400' : 'border-b-white'
+                } shadow-2xl filter drop-shadow-lg`} 
+              />
+            </div>
+            
             {/* Main Wheel */}
             <div
               className={`relative w-72 h-72 rounded-full border-8 shadow-2xl mx-auto mt-4 ${
@@ -204,67 +213,61 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
                 ).join(', ')})`
               }}
             >
-              {/* Segment content */}
+              {/* Segment lines and content */}
               {prizes.map((prize, index) => (
-                <div
-                  key={index}
-                  className="absolute inset-0 flex items-center justify-center"
-                  style={{
-                    transform: `rotate(${index * segmentAngle + segmentAngle/2}deg)`
-                  }}
-                >
+                <div key={index} className="absolute inset-0">
                   {/* Divider line */}
                   <div 
-                    className="absolute w-1 bg-white/50 shadow-lg"
+                    className="absolute w-1 bg-white/70 shadow-lg z-10"
                     style={{
                       height: '136px',
                       top: '0px',
                       left: '50%',
-                      transform: `translateX(-50%) rotate(${-segmentAngle/2}deg)`,
+                      transform: `translateX(-50%) rotate(${index * segmentAngle}deg)`,
                       transformOrigin: 'bottom'
                     }}
                   />
                   
-                  {/* Prize content centered in segment */}
+                  {/* Prize content - positioned in center of each segment */}
                   <div
-                    className="absolute text-white font-bold transform"
+                    className="absolute flex flex-col items-center justify-center text-white font-bold z-5"
                     style={{
-                      top: '30px',
-                      left: '0px',
-                      transform: 'translateX(-50%)',
+                      width: '60px',
+                      height: '60px',
+                      top: '20px',
+                      left: '50%',
+                      transform: `translateX(-50%) rotate(${index * segmentAngle + segmentAngle/2}deg)`,
+                      transformOrigin: '50% 116px',
                       textAlign: 'center',
                       textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
                     }}
                   >
                     <div className="text-2xl mb-1 drop-shadow-lg">{prize.icon}</div>
-                    <div className="text-sm font-bold bg-black/50 px-2 py-1 rounded">{prize.amount}</div>
+                    <div className="text-xs font-bold bg-black/60 px-1 py-0.5 rounded text-center leading-tight">
+                      {prize.amount}
+                    </div>
                   </div>
                 </div>
               ))}
               
               {/* Center hub */}
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
                 <Button
                   onClick={spin}
                   disabled={spinning || !canSpin}
-                  className={`w-24 h-24 rounded-full font-bold text-white shadow-2xl transition-all duration-300 hover:scale-110 ${
+                  className={`w-20 h-20 rounded-full font-bold text-white shadow-2xl transition-all duration-300 hover:scale-110 ${
                     isPremium 
                       ? 'bg-gradient-to-br from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 shadow-yellow-400/50' 
                       : 'bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-purple-400/50'
                   } ${spinning ? 'animate-pulse' : ''}`}
                 >
                   {spinning ? (
-                    <Sparkles className="w-8 h-8 animate-spin" />
+                    <Sparkles className="w-6 h-6 animate-spin" />
                   ) : (
-                    <span className="text-lg font-black">SPIN</span>
+                    <span className="text-sm font-black">SPIN</span>
                   )}
                 </Button>
               </div>
-            </div>
-            
-            {/* Pointer */}
-            <div className="absolute top-1 left-1/2 transform -translate-x-1/2 z-10">
-              <div className="w-0 h-0 border-l-8 border-r-8 border-b-16 border-l-transparent border-r-transparent border-b-white shadow-2xl" />
             </div>
           </div>
           
