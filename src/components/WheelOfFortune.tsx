@@ -67,21 +67,24 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
     setShowConfetti(false);
     playSpinSound();
     
-    // More rotations for better effect
-    const spinAmount = Math.random() * 360 + 1800; // 5+ full rotations
+    // Pre-determine the winning index for accurate results
+    const winningIndex = Math.floor(Math.random() * prizes.length);
+    
+    // Calculate exact rotation to land on the winning segment
+    // The pointer is at the top (0 degrees), so we need to rotate to align the segment center with it
+    const targetAngle = -(winningIndex * segmentAngle + segmentAngle / 2);
+    const spinAmount = 1800 + targetAngle; // 5 full rotations plus target
     const finalRotation = rotation + spinAmount;
-    const normalizedRotation = finalRotation % 360;
-    const selectedIndex = Math.floor((360 - normalizedRotation + segmentAngle/2) / segmentAngle) % prizes.length;
     
     setRotation(finalRotation);
     
-    // 5 second animation
+    // 5 second animation with proper timing
     setTimeout(() => {
-      const selectedPrize = prizes[selectedIndex];
+      const selectedPrize = prizes[winningIndex];
       setResult({ 
         type: selectedPrize.type, 
         amount: selectedPrize.amount, 
-        index: selectedIndex,
+        index: winningIndex,
         icon: selectedPrize.icon
       });
       
@@ -114,6 +117,7 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
   const handleBackToHome = () => {
     playButtonClick();
     dispatch({ type: 'CHANGE_SCREEN', screen: 'main-menu' });
+    onClose();
   };
 
   const canSpin = !state.dailySpinUsed || isPremium;
@@ -171,102 +175,86 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
         </CardHeader>
         
         <CardContent className="text-center">
-          {/* Wheel Container */}
-          <div className="relative w-80 h-80 mx-auto mb-4">
-            {/* Animated outer glow */}
-            <div className="absolute inset-0 rounded-full">
-              {Array.from({ length: 12 }).map((_, i) => (
-                <div
-                  key={i}
-                  className={`absolute w-3 h-3 rounded-full animate-pulse ${
-                    isPremium ? 'bg-yellow-400 shadow-yellow-300' : 'bg-purple-400 shadow-purple-300'
-                  } shadow-lg`}
-                  style={{
-                    top: '50%',
-                    left: '50%',
-                    transform: `translate(-50%, -50%) rotate(${i * 30}deg) translateY(-150px)`,
-                    animationDelay: `${i * 0.1}s`
-                  }}
+          {/* Wheel Container - Centered */}
+          <div className="flex justify-center mb-4">
+            <div className="relative w-80 h-80">
+              {/* Static Arrow Pointer - Fixed at top */}
+              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-30">
+                <div 
+                  className={`w-0 h-0 border-l-8 border-r-8 border-b-16 border-l-transparent border-r-transparent ${
+                    isPremium ? 'border-b-yellow-400' : 'border-b-white'
+                  } shadow-2xl filter drop-shadow-lg`} 
                 />
-              ))}
-            </div>
-            
-            {/* Winning Pointer - Fixed at top */}
-            <div className="absolute top-1 left-1/2 transform -translate-x-1/2 z-20">
-              <div 
-                className={`w-0 h-0 border-l-6 border-r-6 border-b-12 border-l-transparent border-r-transparent ${
-                  isPremium ? 'border-b-yellow-400' : 'border-b-white'
-                } shadow-2xl filter drop-shadow-lg`} 
-              />
-            </div>
-            
-            {/* Main Wheel */}
-            <div
-              className={`relative w-72 h-72 rounded-full border-8 shadow-2xl mx-auto mt-4 ${
-                isPremium ? 'border-yellow-400/80 shadow-yellow-400/30' : 'border-purple-400/80 shadow-purple-400/30'
-              }`}
-              style={{
-                transform: `rotate(${rotation}deg)`,
-                transition: spinning ? 'transform 5s cubic-bezier(0.23, 1, 0.32, 1)' : 'none',
-                background: `conic-gradient(${prizes.map((prize, index) => 
-                  `${prize.color} ${index * segmentAngle}deg ${(index + 1) * segmentAngle}deg`
-                ).join(', ')})`
-              }}
-            >
-              {/* Segment lines and content */}
-              {prizes.map((prize, index) => (
-                <div key={index} className="absolute inset-0">
-                  {/* Divider line */}
-                  <div 
-                    className="absolute w-1 bg-white/70 shadow-lg z-10"
-                    style={{
-                      height: '136px',
-                      top: '0px',
-                      left: '50%',
-                      transform: `translateX(-50%) rotate(${index * segmentAngle}deg)`,
-                      transformOrigin: 'bottom'
-                    }}
-                  />
-                  
-                  {/* Prize content - positioned in center of each segment */}
-                  <div
-                    className="absolute flex flex-col items-center justify-center text-white font-bold z-5"
-                    style={{
-                      width: '60px',
-                      height: '60px',
-                      top: '20px',
-                      left: '50%',
-                      transform: `translateX(-50%) rotate(${index * segmentAngle + segmentAngle/2}deg)`,
-                      transformOrigin: '50% 116px',
-                      textAlign: 'center',
-                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
-                    }}
-                  >
-                    <div className="text-2xl mb-1 drop-shadow-lg">{prize.icon}</div>
-                    <div className="text-xs font-bold bg-black/60 px-1 py-0.5 rounded text-center leading-tight">
-                      {prize.amount}
+              </div>
+              
+              {/* Main Wheel - Perfectly Centered */}
+              <div
+                className={`relative w-72 h-72 rounded-full border-8 shadow-2xl mx-auto mt-4 ${
+                  isPremium ? 'border-yellow-400/80 shadow-yellow-400/30' : 'border-purple-400/80 shadow-purple-400/30'
+                }`}
+                style={{
+                  transform: `rotate(${rotation}deg)`,
+                  transition: spinning ? 'transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none',
+                  background: `conic-gradient(${prizes.map((prize, index) => 
+                    `${prize.color} ${index * segmentAngle}deg ${(index + 1) * segmentAngle}deg`
+                  ).join(', ')})`
+                }}
+              >
+                {/* Segment lines and content */}
+                {prizes.map((prize, index) => (
+                  <div key={index} className="absolute inset-0">
+                    {/* Divider line */}
+                    <div 
+                      className="absolute w-1 bg-white/80 shadow-lg z-10"
+                      style={{
+                        height: '136px',
+                        top: '0px',
+                        left: '50%',
+                        transform: `translateX(-50%) rotate(${index * segmentAngle}deg)`,
+                        transformOrigin: 'bottom'
+                      }}
+                    />
+                    
+                    {/* Prize content - Centered in each segment */}
+                    <div
+                      className="absolute flex flex-col items-center justify-center text-white font-bold z-5"
+                      style={{
+                        width: '80px',
+                        height: '80px',
+                        top: '30px',
+                        left: '50%',
+                        transform: `translateX(-50%) rotate(${index * segmentAngle + segmentAngle/2}deg)`,
+                        transformOrigin: '50% 106px',
+                        textAlign: 'center',
+                        textShadow: '2px 2px 4px rgba(0,0,0,0.9)'
+                      }}
+                    >
+                      <div className="text-2xl mb-1 drop-shadow-lg">{prize.icon}</div>
+                      <div className="text-xs font-bold bg-black/70 px-2 py-1 rounded text-center leading-tight">
+                        {prize.amount}
+                      </div>
                     </div>
                   </div>
+                ))}
+                
+                {/* Center hub */}
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
+                  <Button
+                    onClick={spin}
+                    disabled={spinning || !canSpin}
+                    className={`w-20 h-20 rounded-full font-bold text-white shadow-2xl transition-all duration-300 hover:scale-110 ${
+                      isPremium 
+                        ? 'bg-gradient-to-br from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 shadow-yellow-400/50' 
+                        : 'bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-purple-400/50'
+                    } ${spinning ? 'animate-pulse' : ''}`}
+                  >
+                    {spinning ? (
+                      <Sparkles className="w-6 h-6 animate-spin" />
+                    ) : (
+                      <span className="text-sm font-black">SPIN</span>
+                    )}
+                  </Button>
                 </div>
-              ))}
-              
-              {/* Center hub */}
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
-                <Button
-                  onClick={spin}
-                  disabled={spinning || !canSpin}
-                  className={`w-20 h-20 rounded-full font-bold text-white shadow-2xl transition-all duration-300 hover:scale-110 ${
-                    isPremium 
-                      ? 'bg-gradient-to-br from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 shadow-yellow-400/50' 
-                      : 'bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-purple-400/50'
-                  } ${spinning ? 'animate-pulse' : ''}`}
-                >
-                  {spinning ? (
-                    <Sparkles className="w-6 h-6 animate-spin" />
-                  ) : (
-                    <span className="text-sm font-black">SPIN</span>
-                  )}
-                </Button>
               </div>
             </div>
           </div>

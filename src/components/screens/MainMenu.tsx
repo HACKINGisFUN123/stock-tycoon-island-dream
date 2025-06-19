@@ -48,24 +48,26 @@ const MainMenu: React.FC = () => {
   };
   
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 animate-fade-in ${state.tutorialCompleted ? '' : 'overflow-hidden'}`}>
-      <div className="max-w-md mx-auto">
-        <div className="text-center mb-6 pt-4">
-          <div className="mb-4">
-            <div className="w-20 h-20 mx-auto bg-gradient-to-br from-green-400 via-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4 animate-pulse">
-              <TrendingUp className="w-10 h-10 text-white" />
+    <div className={`min-h-screen max-h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 animate-fade-in ${state.tutorialCompleted ? '' : 'overflow-hidden'}`}>
+      <div className="max-w-md mx-auto h-full flex flex-col">
+        {/* Header Section */}
+        <div className="text-center mb-4 pt-2">
+          <div className="mb-3">
+            <div className="w-16 h-16 mx-auto bg-gradient-to-br from-green-400 via-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-3 animate-pulse">
+              <TrendingUp className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-4xl font-bold text-white mb-2 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">Stock Tycoon</h1>
-            <p className="text-gray-300">Build Your Financial Empire</p>
+            <h1 className="text-3xl font-bold text-white mb-1 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">Stock Tycoon</h1>
+            <p className="text-gray-300 text-sm">Build Your Financial Empire</p>
           </div>
         </div>
         
-        <Card className="bg-slate-800/60 backdrop-blur-md border-slate-600 mb-6 animate-scale-in">
-          <CardHeader>
-            <CardTitle className="text-white text-center">Your Wealth</CardTitle>
+        {/* Wealth Card */}
+        <Card className="bg-slate-800/60 backdrop-blur-md border-slate-600 mb-4 animate-scale-in">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-white text-center text-lg">Your Wealth</CardTitle>
           </CardHeader>
-          <CardContent className="text-center">
-            <div className="text-3xl font-bold text-green-400 mb-2">
+          <CardContent className="text-center pt-0">
+            <div className="text-2xl font-bold text-green-400 mb-2">
               {formatMoney(totalWealth)}
             </div>
             <div className="flex items-center justify-center gap-4 text-gray-400 text-sm">
@@ -84,14 +86,14 @@ const MainMenu: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* Daily Reward Notification - positioned right after wealth card */}
+        {/* Daily Reward Notification */}
         {!state.dailyRewardClaimed && (
-          <Card className="bg-yellow-500/20 backdrop-blur-md border-yellow-400/30 mb-4 animate-pulse">
-            <CardContent className="p-4 text-center">
-              <div className="text-yellow-400 font-semibold mb-2">Daily Bonus Available!</div>
+          <Card className="bg-yellow-500/20 backdrop-blur-md border-yellow-400/30 mb-3 animate-pulse">
+            <CardContent className="p-3 text-center">
+              <div className="text-yellow-400 font-semibold mb-2 text-sm">Daily Bonus Available!</div>
               <Button
                 onClick={() => handleButtonClick('money-shop')}
-                className="bg-yellow-500 hover:bg-yellow-600 text-white transition-all duration-300 hover:scale-105"
+                className="bg-yellow-500 hover:bg-yellow-600 text-white transition-all duration-300 hover:scale-105 text-xs py-1"
               >
                 Claim $1,000
               </Button>
@@ -99,80 +101,82 @@ const MainMenu: React.FC = () => {
           </Card>
         )}
 
-        {/* Central Spin Wheel Button */}
-        <Card className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-md border-purple-400/30 mb-6 animate-scale-in">
-          <CardContent className="p-4 text-center">
-            <Button
-              onClick={handleSpinWheel}
-              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-lg py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg relative overflow-hidden"
-            >
-              <Star className="w-6 h-6 mr-3 animate-pulse" />
-              Daily Lucky Spin
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 animate-pulse" />
-            </Button>
-            {!state.dailySpinUsed && (
-              <div className="text-purple-400 text-sm font-semibold mt-2 animate-pulse">
+        {/* Central Spin Wheel Button - Only show if daily spin is available */}
+        {!state.dailySpinUsed && (
+          <Card className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-md border-purple-400/30 mb-4 animate-scale-in">
+            <CardContent className="p-3 text-center">
+              <Button
+                onClick={handleSpinWheel}
+                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-base py-4 transition-all duration-300 hover:scale-105 hover:shadow-lg relative overflow-hidden"
+              >
+                <Star className="w-5 h-5 mr-2 animate-pulse" />
+                Daily Lucky Spin
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 animate-pulse" />
+              </Button>
+              <div className="text-purple-400 text-xs font-semibold mt-2 animate-pulse">
                 🎁 FREE SPIN AVAILABLE!
               </div>
-            )}
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
         
-        <div className="space-y-4">
+        {/* Main Action Buttons */}
+        <div className="flex-1 space-y-3 overflow-y-auto">
           <Button 
             onClick={() => handleButtonClick('market')}
-            className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-lg py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in"
+            className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-base py-4 transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in"
             style={{ animationDelay: '0.1s' }}
           >
-            <Play className="w-6 h-6 mr-3" />
+            <Play className="w-5 h-5 mr-2" />
             Start Trading
           </Button>
           
           <Button 
             onClick={() => handleButtonClick('shop')}
-            className="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white text-lg py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in"
+            className="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white text-base py-4 transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in"
             style={{ animationDelay: '0.2s' }}
           >
-            <ShoppingBag className="w-6 h-6 mr-3" />
+            <ShoppingBag className="w-5 h-5 mr-2" />
             Luxury Shop
           </Button>
           
           <Button 
             onClick={() => handleButtonClick('money-shop')}
-            className="w-full bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 text-white text-lg py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in"
+            className="w-full bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 text-white text-base py-4 transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in"
             style={{ animationDelay: '0.3s' }}
           >
-            <DollarSign className="w-6 h-6 mr-3" />
+            <DollarSign className="w-5 h-5 mr-2" />
             Get Money
           </Button>
           
           <Button 
             onClick={() => handleButtonClick('inventory')}
-            className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white text-lg py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in"
+            className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white text-base py-4 transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in"
             style={{ animationDelay: '0.4s' }}
           >
-            <Package className="w-6 h-6 mr-3" />
+            <Package className="w-5 h-5 mr-2" />
             My Collection
           </Button>
           
-          <div className="grid grid-cols-2 gap-4 mt-6 pb-6">
+          {/* Bottom Action Buttons */}
+          <div className="grid grid-cols-2 gap-3 mt-4">
             <Button 
               onClick={() => handleButtonClick('settings')}
               variant="outline"
-              className="bg-slate-800/50 border-slate-600 text-white hover:bg-slate-700 transition-all duration-300 hover:scale-105 animate-fade-in"
+              className="bg-slate-800/50 border-slate-600 text-white hover:bg-slate-700 transition-all duration-300 hover:scale-105 animate-fade-in py-3"
               style={{ animationDelay: '0.5s' }}
             >
-              <Settings className="w-4 h-4 mr-2" />
+              <Settings className="w-4 h-4 mr-1" />
               Settings
             </Button>
             
             <Button 
               onClick={() => handleButtonClick('help')}
               variant="outline"
-              className="bg-slate-800/50 border-slate-600 text-white hover:bg-slate-700 transition-all duration-300 hover:scale-105 animate-fade-in"
+              className="bg-slate-800/50 border-slate-600 text-white hover:bg-slate-700 transition-all duration-300 hover:scale-105 animate-fade-in py-3"
               style={{ animationDelay: '0.6s' }}
             >
-              <HelpCircle className="w-4 h-4 mr-2" />
+              <HelpCircle className="w-4 h-4 mr-1" />
               Help
             </Button>
           </div>
