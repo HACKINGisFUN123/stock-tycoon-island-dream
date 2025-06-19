@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useGame } from '../../contexts/GameContext';
 import { Button } from '../ui/button';
@@ -88,7 +87,7 @@ const MainMenu: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* Daily Reward Notification - Fixed position */}
+        {/* Daily Reward Notification */}
         {!state.dailyRewardClaimed && (
           <Card className="bg-yellow-500/20 backdrop-blur-md border-yellow-400/30 mb-3 animate-pulse">
             <CardContent className="p-3 text-center">
@@ -122,11 +121,13 @@ const MainMenu: React.FC = () => {
           </Card>
         )}
         
-        {/* Main Action Buttons - Responsive grid */}
-        <div className={`flex-1 ${showDailySpinButton ? 'space-y-3' : 'space-y-4'} overflow-hidden`}>
+        {/* Main Action Buttons - Dynamic sizing based on available space */}
+        <div className="flex-1 flex flex-col justify-center space-y-3">
           <Button 
             onClick={() => handleButtonClick('market')}
-            className={`w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-base ${showDailySpinButton ? 'py-4' : 'py-5'} transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in`}
+            className={`w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-base transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in ${
+              showDailySpinButton ? 'py-4' : 'py-6'
+            }`}
             style={{ animationDelay: '0.1s' }}
           >
             <Play className="w-5 h-5 mr-2" />
@@ -135,7 +136,9 @@ const MainMenu: React.FC = () => {
           
           <Button 
             onClick={() => handleButtonClick('shop')}
-            className={`w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white text-base ${showDailySpinButton ? 'py-4' : 'py-5'} transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in`}
+            className={`w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white text-base transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in ${
+              showDailySpinButton ? 'py-4' : 'py-6'
+            }`}
             style={{ animationDelay: '0.2s' }}
           >
             <ShoppingBag className="w-5 h-5 mr-2" />
@@ -144,7 +147,9 @@ const MainMenu: React.FC = () => {
           
           <Button 
             onClick={() => handleButtonClick('money-shop')}
-            className={`w-full bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 text-white text-base ${showDailySpinButton ? 'py-4' : 'py-5'} transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in`}
+            className={`w-full bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 text-white text-base transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in ${
+              showDailySpinButton ? 'py-4' : 'py-6'
+            }`}
             style={{ animationDelay: '0.3s' }}
           >
             <DollarSign className="w-5 h-5 mr-2" />
@@ -153,7 +158,9 @@ const MainMenu: React.FC = () => {
           
           <Button 
             onClick={() => handleButtonClick('inventory')}
-            className={`w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white text-base ${showDailySpinButton ? 'py-4' : 'py-5'} transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in`}
+            className={`w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white text-base transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in ${
+              showDailySpinButton ? 'py-4' : 'py-6'
+            }`}
             style={{ animationDelay: '0.4s' }}
           >
             <Package className="w-5 h-5 mr-2" />
@@ -165,7 +172,9 @@ const MainMenu: React.FC = () => {
             <Button 
               onClick={() => handleButtonClick('settings')}
               variant="outline"
-              className={`bg-slate-800/50 border-slate-600 text-white hover:bg-slate-700 transition-all duration-300 hover:scale-105 animate-fade-in ${showDailySpinButton ? 'py-3' : 'py-4'}`}
+              className={`bg-slate-800/50 border-slate-600 text-white hover:bg-slate-700 transition-all duration-300 hover:scale-105 animate-fade-in ${
+                showDailySpinButton ? 'py-3' : 'py-4'
+              }`}
               style={{ animationDelay: '0.5s' }}
             >
               <Settings className="w-4 h-4 mr-1" />
@@ -175,7 +184,9 @@ const MainMenu: React.FC = () => {
             <Button 
               onClick={() => handleButtonClick('help')}
               variant="outline"
-              className={`bg-slate-800/50 border-slate-600 text-white hover:bg-slate-700 transition-all duration-300 hover:scale-105 animate-fade-in ${showDailySpinButton ? 'py-3' : 'py-4'}`}
+              className={`bg-slate-800/50 border-slate-600 text-white hover:bg-slate-700 transition-all duration-300 hover:scale-105 animate-fade-in ${
+                showDailySpinButton ? 'py-3' : 'py-4'
+              }`}
               style={{ animationDelay: '0.6s' }}
             >
               <HelpCircle className="w-4 h-4 mr-1" />

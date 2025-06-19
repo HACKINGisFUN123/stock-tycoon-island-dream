@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useGame } from '../contexts/GameContext';
 import { Button } from './ui/button';
@@ -36,7 +35,7 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
   const [showConfetti, setShowConfetti] = useState(false);
   const [showDiamondSpinOption, setShowDiamondSpinOption] = useState(false);
 
-  // 7 segments for cleaner design
+  // 8 segments for better symmetry
   const regularPrizes: Prize[] = [
     { type: 'money', amount: 500, color: '#10b981', icon: '💰', label: '$500' },
     { type: 'diamonds', amount: 5, color: '#8b5cf6', icon: '💎', label: '5 💎' },
@@ -45,16 +44,18 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
     { type: 'money', amount: 2000, color: '#047857', icon: '💰', label: '$2K' },
     { type: 'diamonds', amount: 15, color: '#6d28d9', icon: '💎', label: '15 💎' },
     { type: 'money', amount: 5000, color: '#f59e0b', icon: '🎁', label: '$5K' },
+    { type: 'money', amount: 750, color: '#0891b2', icon: '💰', label: '$750' },
   ];
 
   const premiumPrizes: Prize[] = [
-    { type: 'money', amount: 50000, color: '#f59e0b', icon: '💰', label: '$50K' },
-    { type: 'diamonds', amount: 500, color: '#d97706', icon: '💎', label: '500 💎' },
-    { type: 'money', amount: 100000, color: '#b45309', icon: '💰', label: '$100K' },
-    { type: 'diamonds', amount: 1000, color: '#92400e', icon: '💎', label: '1K 💎' },
-    { type: 'money', amount: 250000, color: '#78350f', icon: '💰', label: '$250K' },
-    { type: 'diamonds', amount: 2500, color: '#451a03', icon: '💎', label: '2.5K 💎' },
+    { type: 'money', amount: 100000, color: '#f59e0b', icon: '💰', label: '$100K' },
+    { type: 'diamonds', amount: 1000, color: '#d97706', icon: '💎', label: '1K 💎' },
+    { type: 'money', amount: 250000, color: '#b45309', icon: '💰', label: '$250K' },
+    { type: 'diamonds', amount: 2500, color: '#92400e', icon: '💎', label: '2.5K 💎' },
+    { type: 'money', amount: 500000, color: '#78350f', icon: '💰', label: '$500K' },
+    { type: 'diamonds', amount: 5000, color: '#451a03', icon: '💎', label: '5K 💎' },
     { type: 'money', amount: 1000000, color: '#ffd700', icon: '👑', label: '$1M' },
+    { type: 'money', amount: 150000, color: '#ea580c', icon: '💰', label: '$150K' },
   ];
 
   const prizes = isPremium ? premiumPrizes : regularPrizes;
@@ -118,7 +119,7 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
   const canSpin = !state.dailySpinUsed || isPremium;
 
   return (
-    <div className="fixed inset-0 bg-black/95 flex items-center justify-center z-50 p-4 animate-fade-in">
+    <div className="fixed inset-0 bg-black/95 flex items-center justify-center z-50 p-4 animate-fade-in overflow-hidden">
       {/* Confetti Effect */}
       {showConfetti && (
         <div className="absolute inset-0 pointer-events-none">
@@ -169,24 +170,24 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
           </CardTitle>
         </CardHeader>
         
-        <CardContent className="text-center">
-          {/* Wheel Container */}
-          <div className="flex justify-center mb-4">
+        <CardContent className="text-center flex flex-col items-center">
+          {/* Wheel Container - Perfectly Centered */}
+          <div className="flex justify-center mb-4 relative">
+            {/* Static Arrow Pointer - Positioned above wheel */}
+            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-30 -mt-4">
+              <div 
+                className={`w-0 h-0 border-l-8 border-r-8 border-b-16 border-l-transparent border-r-transparent ${
+                  isPremium ? 'border-b-yellow-400' : 'border-b-white'
+                } drop-shadow-xl filter`} 
+              />
+            </div>
+            
+            {/* Casino Wheel - Perfectly Centered */}
             <div className="relative">
-              {/* Static Arrow Pointer */}
-              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-30 -mt-2">
-                <div 
-                  className={`w-0 h-0 border-l-6 border-r-6 border-b-12 border-l-transparent border-r-transparent ${
-                    isPremium ? 'border-b-yellow-400' : 'border-b-white'
-                  } drop-shadow-lg filter`} 
-                />
-              </div>
-              
-              {/* Casino Wheel */}
               <div
-                className={`relative w-80 h-80 rounded-full shadow-2xl ${
+                className={`w-80 h-80 rounded-full shadow-2xl ${
                   isPremium ? 'shadow-yellow-400/20' : 'shadow-purple-400/20'
-                }`}
+                } mx-auto`}
                 style={{
                   transform: `rotate(${rotation}deg)`,
                   transition: spinning ? 'transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none',
@@ -221,21 +222,21 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
                       }}
                     />
                     
-                    {/* Prize content */}
+                    {/* Prize content - Moved closer to edge */}
                     <div
                       className="absolute flex flex-col items-center justify-center text-white font-bold z-5"
                       style={{
-                        width: '90px',
-                        height: '70px',
-                        top: '40px',
+                        width: '100px',
+                        height: '50px',
+                        top: '25px',
                         left: '50%',
                         transform: `translateX(-50%) rotate(${index * segmentAngle + segmentAngle/2}deg)`,
-                        transformOrigin: '50% 120px',
+                        transformOrigin: '50% 135px',
                         textAlign: 'center'
                       }}
                     >
                       <div className="text-2xl mb-1 drop-shadow-lg filter">{prize.icon}</div>
-                      <div className="text-xs font-black bg-black/80 px-2 py-1 rounded-md text-center leading-tight border border-white/20 shadow-lg">
+                      <div className="text-xs font-black bg-black/90 px-2 py-1 rounded-md text-center leading-tight border border-white/40 shadow-xl text-white">
                         {prize.label}
                       </div>
                     </div>
