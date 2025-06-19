@@ -48,14 +48,14 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
   ];
 
   const premiumPrizes: Prize[] = [
-    { type: 'money', amount: 100000, color: '#f59e0b', icon: '💰', label: '$100K' },
-    { type: 'diamonds', amount: 1000, color: '#d97706', icon: '💎', label: '1K 💎' },
-    { type: 'money', amount: 250000, color: '#b45309', icon: '💰', label: '$250K' },
-    { type: 'diamonds', amount: 2500, color: '#92400e', icon: '💎', label: '2.5K 💎' },
-    { type: 'money', amount: 500000, color: '#78350f', icon: '💰', label: '$500K' },
-    { type: 'diamonds', amount: 5000, color: '#451a03', icon: '💎', label: '5K 💎' },
-    { type: 'money', amount: 1000000, color: '#ffd700', icon: '👑', label: '$1M' },
-    { type: 'money', amount: 150000, color: '#ea580c', icon: '💰', label: '$150K' },
+    { type: 'money', amount: 500000, color: '#ffd700', icon: '💰', label: '$500K' },
+    { type: 'diamonds', amount: 10000, color: '#ff6b6b', icon: '💎', label: '10K 💎' },
+    { type: 'money', amount: 1000000, color: '#ff4757', icon: '👑', label: '$1M' },
+    { type: 'diamonds', amount: 25000, color: '#5f27cd', icon: '💎', label: '25K 💎' },
+    { type: 'money', amount: 2500000, color: '#00d2d3', icon: '💰', label: '$2.5M' },
+    { type: 'diamonds', amount: 50000, color: '#ff9ff3', icon: '💎', label: '50K 💎' },
+    { type: 'money', amount: 10000000, color: '#54a0ff', icon: '🏆', label: '$10M' },
+    { type: 'money', amount: 750000, color: '#2ed573', icon: '💰', label: '$750K' },
   ];
 
   const prizes = isPremium ? premiumPrizes : regularPrizes;
@@ -69,9 +69,19 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
     setShowConfetti(false);
     playSpinSound();
     
+    // Calculate winning index - the arrow points to the top (12 o'clock position)
     const winningIndex = Math.floor(Math.random() * prizes.length);
-    const targetAngle = -(winningIndex * segmentAngle + segmentAngle / 2);
-    const spinAmount = 1800 + targetAngle;
+    
+    // Calculate the angle where the winning segment should stop at the top
+    // We want the center of the winning segment to align with the arrow (top position)
+    const segmentCenterAngle = winningIndex * segmentAngle + segmentAngle / 2;
+    
+    // The wheel needs to rotate so that the winning segment's center aligns with the top (0 degrees)
+    // Since we're rotating the wheel clockwise, we need to calculate the negative rotation
+    const targetRotation = 360 - segmentCenterAngle;
+    
+    // Add multiple full rotations for dramatic effect
+    const spinAmount = 1800 + targetRotation; // 5 full rotations + target position
     const finalRotation = rotation + spinAmount;
     
     setRotation(finalRotation);
@@ -173,85 +183,102 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
         <CardContent className="text-center flex flex-col items-center">
           {/* Wheel Container - Perfectly Centered */}
           <div className="flex justify-center mb-4 relative">
-            {/* Static Arrow Pointer - Positioned above wheel */}
-            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-30 -mt-4">
-              <div 
-                className={`w-0 h-0 border-l-8 border-r-8 border-b-16 border-l-transparent border-r-transparent ${
-                  isPremium ? 'border-b-yellow-400' : 'border-b-white'
-                } drop-shadow-xl filter`} 
-              />
+            {/* Static Arrow Pointer - Fixed at top, pointing down */}
+            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-30 -mt-6">
+              <div className="flex flex-col items-center">
+                <div 
+                  className={`w-0 h-0 border-l-6 border-r-6 border-b-12 border-l-transparent border-r-transparent ${
+                    isPremium ? 'border-b-yellow-400' : 'border-b-white'
+                  } drop-shadow-2xl filter animate-pulse`} 
+                />
+                <div 
+                  className={`w-2 h-4 ${
+                    isPremium ? 'bg-yellow-400' : 'bg-white'
+                  } drop-shadow-xl`}
+                />
+              </div>
             </div>
             
-            {/* Casino Wheel - Perfectly Centered */}
+            {/* Casino Wheel - Perfectly Centered and Symmetric */}
             <div className="relative">
               <div
                 className={`w-80 h-80 rounded-full shadow-2xl ${
                   isPremium ? 'shadow-yellow-400/20' : 'shadow-purple-400/20'
-                } mx-auto`}
+                } mx-auto relative overflow-hidden`}
                 style={{
                   transform: `rotate(${rotation}deg)`,
                   transition: spinning ? 'transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none',
-                  background: `conic-gradient(${prizes.map((prize, index) => 
-                    `${prize.color} ${index * segmentAngle}deg ${(index + 1) * segmentAngle}deg`
-                  ).join(', ')})`,
-                  border: isPremium ? '6px solid #fbbf24' : '6px solid #8b5cf6'
+                  border: isPremium ? '8px solid #fbbf24' : '8px solid #8b5cf6'
                 }}
               >
-                {/* Outer Ring */}
+                {/* Background gradient for each segment */}
+                {prizes.map((prize, index) => (
+                  <div
+                    key={`bg-${index}`}
+                    className="absolute inset-0"
+                    style={{
+                      background: `conic-gradient(from ${index * segmentAngle}deg, ${prize.color} 0deg, ${prize.color} ${segmentAngle}deg, transparent ${segmentAngle}deg)`,
+                      clipPath: `polygon(50% 50%, ${50 + 50 * Math.cos((index * segmentAngle - 90) * Math.PI / 180)}% ${50 + 50 * Math.sin((index * segmentAngle - 90) * Math.PI / 180)}%, ${50 + 50 * Math.cos(((index + 1) * segmentAngle - 90) * Math.PI / 180)}% ${50 + 50 * Math.sin(((index + 1) * segmentAngle - 90) * Math.PI / 180)}%)`
+                    }}
+                  />
+                ))}
+
+                {/* Outer decorative ring */}
                 <div className={`absolute inset-2 rounded-full border-4 ${
                   isPremium ? 'border-yellow-300/50' : 'border-purple-300/50'
                 }`} />
                 
-                {/* Inner Ring */}
+                {/* Inner decorative ring */}
                 <div className={`absolute inset-6 rounded-full border-2 ${
                   isPremium ? 'border-yellow-200/30' : 'border-purple-200/30'
                 }`} />
 
-                {/* Segment lines and content */}
+                {/* Segment divider lines */}
+                {prizes.map((_, index) => (
+                  <div 
+                    key={`line-${index}`}
+                    className="absolute w-1 bg-white/90 shadow-lg z-10"
+                    style={{
+                      height: '152px',
+                      top: '8px',
+                      left: '50%',
+                      transform: `translateX(-50%) rotate(${index * segmentAngle}deg)`,
+                      transformOrigin: 'bottom'
+                    }}
+                  />
+                ))}
+                
+                {/* Prize content - Positioned near outer edge */}
                 {prizes.map((prize, index) => (
-                  <div key={index} className="absolute inset-0">
-                    {/* Divider line */}
-                    <div 
-                      className="absolute w-1 bg-white/90 shadow-lg z-10"
-                      style={{
-                        height: '152px',
-                        top: '6px',
-                        left: '50%',
-                        transform: `translateX(-50%) rotate(${index * segmentAngle}deg)`,
-                        transformOrigin: 'bottom'
-                      }}
-                    />
-                    
-                    {/* Prize content - Moved closer to edge */}
-                    <div
-                      className="absolute flex flex-col items-center justify-center text-white font-bold z-5"
-                      style={{
-                        width: '100px',
-                        height: '50px',
-                        top: '25px',
-                        left: '50%',
-                        transform: `translateX(-50%) rotate(${index * segmentAngle + segmentAngle/2}deg)`,
-                        transformOrigin: '50% 135px',
-                        textAlign: 'center'
-                      }}
-                    >
-                      <div className="text-2xl mb-1 drop-shadow-lg filter">{prize.icon}</div>
-                      <div className="text-xs font-black bg-black/90 px-2 py-1 rounded-md text-center leading-tight border border-white/40 shadow-xl text-white">
-                        {prize.label}
-                      </div>
+                  <div
+                    key={`prize-${index}`}
+                    className="absolute flex flex-col items-center justify-center z-20"
+                    style={{
+                      width: '90px',
+                      height: '45px',
+                      top: '35px',
+                      left: '50%',
+                      transform: `translateX(-50%) rotate(${index * segmentAngle + segmentAngle/2}deg)`,
+                      transformOrigin: '50% 125px',
+                      textAlign: 'center'
+                    }}
+                  >
+                    <div className="text-xl mb-1 drop-shadow-lg filter">{prize.icon}</div>
+                    <div className="text-xs font-black bg-black/95 px-2 py-1 rounded-md text-center leading-tight border border-white/60 shadow-xl text-white min-w-0">
+                      {prize.label}
                     </div>
                   </div>
                 ))}
                 
-                {/* Center hub */}
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
+                {/* Center hub with spin button */}
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30">
                   <Button
                     onClick={spin}
                     disabled={spinning || !canSpin}
                     className={`w-24 h-24 rounded-full font-bold text-white shadow-2xl transition-all duration-300 hover:scale-110 ${
                       isPremium 
-                        ? 'bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500 hover:from-yellow-500 hover:to-orange-600 shadow-yellow-400/50 border-2 border-yellow-300' 
-                        : 'bg-gradient-to-br from-purple-500 via-purple-600 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-purple-400/50 border-2 border-purple-300'
+                        ? 'bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500 hover:from-yellow-500 hover:to-orange-600 shadow-yellow-400/50 border-4 border-yellow-300' 
+                        : 'bg-gradient-to-br from-purple-500 via-purple-600 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-purple-400/50 border-4 border-purple-300'
                     } ${spinning ? 'animate-pulse' : ''}`}
                   >
                     {spinning ? (
@@ -276,7 +303,6 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
             </div>
           )}
           
-          {/* Diamond Spin Option */}
           {showDiamondSpinOption && !spinning && (
             <div className="mb-4 p-4 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-lg border border-purple-400/30">
               <p className="text-white text-sm mb-3">Want another spin?</p>
