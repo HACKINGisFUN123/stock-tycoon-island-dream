@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useGame } from '../contexts/GameContext';
 import { Button } from './ui/button';
@@ -37,12 +38,12 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
 
   // 8 segments for better symmetry
   const regularPrizes: Prize[] = [
-    { type: 'money', amount: 500, color: '#10b981', icon: '💰', label: '$500' },
-    { type: 'diamonds', amount: 5, color: '#8b5cf6', icon: '💎', label: '5 💎' },
-    { type: 'money', amount: 1000, color: '#059669', icon: '🪙', label: '$1K' },
-    { type: 'diamonds', amount: 10, color: '#7c3aed', icon: '💎', label: '10 💎' },
-    { type: 'money', amount: 2000, color: '#047857', icon: '💰', label: '$2K' },
-    { type: 'diamonds', amount: 15, color: '#6d28d9', icon: '💎', label: '15 💎' },
+    { type: 'money', amount: 500, color: '#059669', icon: '💰', label: '$500' },
+    { type: 'diamonds', amount: 5, color: '#7c3aed', icon: '💎', label: '5 💎' },
+    { type: 'money', amount: 1000, color: '#047857', icon: '🪙', label: '$1K' },
+    { type: 'diamonds', amount: 10, color: '#6d28d9', icon: '💎', label: '10 💎' },
+    { type: 'money', amount: 2000, color: '#065f46', icon: '💰', label: '$2K' },
+    { type: 'diamonds', amount: 15, color: '#581c87', icon: '💎', label: '15 💎' },
     { type: 'money', amount: 5000, color: '#f59e0b', icon: '🎁', label: '$5K' },
     { type: 'money', amount: 750, color: '#0891b2', icon: '💰', label: '$750' },
   ];
@@ -54,7 +55,7 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
     { type: 'diamonds', amount: 2500, color: '#92400e', icon: '💎', label: '2.5K 💎' },
     { type: 'money', amount: 500000, color: '#78350f', icon: '💰', label: '$500K' },
     { type: 'diamonds', amount: 5000, color: '#451a03', icon: '💎', label: '5K 💎' },
-    { type: 'money', amount: 1000000, color: '#ffd700', icon: '👑', label: '$1M' },
+    { type: 'money', amount: 1000000, color: '#fbbf24', icon: '👑', label: '$1M' },
     { type: 'money', amount: 150000, color: '#ea580c', icon: '💰', label: '$150K' },
   ];
 
@@ -97,7 +98,7 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
       if (!isPremium) {
         setShowDiamondSpinOption(true);
       }
-    }, 5000);
+    }, 4000);
   };
 
   const handleDiamondSpin = () => {
@@ -174,35 +175,36 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
           {/* Wheel Container - Perfectly Centered */}
           <div className="flex justify-center mb-4 relative">
             {/* Static Arrow Pointer - Positioned above wheel */}
-            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-30 -mt-4">
+            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-30 -mt-2">
               <div 
-                className={`w-0 h-0 border-l-8 border-r-8 border-b-16 border-l-transparent border-r-transparent ${
+                className={`w-0 h-0 border-l-[12px] border-r-[12px] border-b-[20px] border-l-transparent border-r-transparent ${
                   isPremium ? 'border-b-yellow-400' : 'border-b-white'
-                } drop-shadow-xl filter`} 
+                } drop-shadow-2xl filter`}
+                style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.5))' }}
               />
             </div>
             
             {/* Casino Wheel - Perfectly Centered */}
-            <div className="relative">
+            <div className="relative flex items-center justify-center">
               <div
                 className={`w-80 h-80 rounded-full shadow-2xl ${
-                  isPremium ? 'shadow-yellow-400/20' : 'shadow-purple-400/20'
-                } mx-auto`}
+                  isPremium ? 'shadow-yellow-400/30' : 'shadow-purple-400/30'
+                } relative`}
                 style={{
                   transform: `rotate(${rotation}deg)`,
-                  transition: spinning ? 'transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none',
+                  transition: spinning ? 'transform 4s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none',
                   background: `conic-gradient(${prizes.map((prize, index) => 
                     `${prize.color} ${index * segmentAngle}deg ${(index + 1) * segmentAngle}deg`
                   ).join(', ')})`,
                   border: isPremium ? '6px solid #fbbf24' : '6px solid #8b5cf6'
                 }}
               >
-                {/* Outer Ring */}
+                {/* Outer decorative ring */}
                 <div className={`absolute inset-2 rounded-full border-4 ${
                   isPremium ? 'border-yellow-300/50' : 'border-purple-300/50'
                 }`} />
                 
-                {/* Inner Ring */}
+                {/* Inner decorative ring */}
                 <div className={`absolute inset-6 rounded-full border-2 ${
                   isPremium ? 'border-yellow-200/30' : 'border-purple-200/30'
                 }`} />
@@ -222,20 +224,20 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
                       }}
                     />
                     
-                    {/* Prize content - Moved closer to edge */}
+                    {/* Prize content - Positioned closer to edge */}
                     <div
                       className="absolute flex flex-col items-center justify-center text-white font-bold z-5"
                       style={{
-                        width: '100px',
-                        height: '50px',
-                        top: '25px',
+                        width: '90px',
+                        height: '40px',
+                        top: '20px',
                         left: '50%',
                         transform: `translateX(-50%) rotate(${index * segmentAngle + segmentAngle/2}deg)`,
-                        transformOrigin: '50% 135px',
+                        transformOrigin: '50% 140px',
                         textAlign: 'center'
                       }}
                     >
-                      <div className="text-2xl mb-1 drop-shadow-lg filter">{prize.icon}</div>
+                      <div className="text-xl mb-1 drop-shadow-lg filter">{prize.icon}</div>
                       <div className="text-xs font-black bg-black/90 px-2 py-1 rounded-md text-center leading-tight border border-white/40 shadow-xl text-white">
                         {prize.label}
                       </div>
@@ -248,16 +250,16 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
                   <Button
                     onClick={spin}
                     disabled={spinning || !canSpin}
-                    className={`w-24 h-24 rounded-full font-bold text-white shadow-2xl transition-all duration-300 hover:scale-110 ${
+                    className={`w-20 h-20 rounded-full font-bold text-white shadow-2xl transition-all duration-300 hover:scale-110 ${
                       isPremium 
                         ? 'bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500 hover:from-yellow-500 hover:to-orange-600 shadow-yellow-400/50 border-2 border-yellow-300' 
                         : 'bg-gradient-to-br from-purple-500 via-purple-600 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-purple-400/50 border-2 border-purple-300'
                     } ${spinning ? 'animate-pulse' : ''}`}
                   >
                     {spinning ? (
-                      <Sparkles className="w-6 h-6 animate-spin" />
+                      <Sparkles className="w-5 h-5 animate-spin" />
                     ) : (
-                      <span className="text-sm font-black">SPIN</span>
+                      <span className="text-xs font-black">SPIN</span>
                     )}
                   </Button>
                 </div>
