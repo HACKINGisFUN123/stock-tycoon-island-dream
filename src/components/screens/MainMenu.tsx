@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useGame } from '../../contexts/GameContext';
 import { Button } from '../ui/button';
@@ -53,7 +52,7 @@ const MainMenu: React.FC = () => {
     <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 animate-fade-in overflow-hidden">
       <div className="max-w-md mx-auto h-full flex flex-col">
         {/* Header Section */}
-        <div className="text-center mb-4 pt-2 flex-shrink-0">
+        <div className="text-center mb-4 pt-2">
           <div className="mb-3">
             <div className="w-16 h-16 mx-auto bg-gradient-to-br from-green-400 via-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-3 animate-pulse">
               <TrendingUp className="w-8 h-8 text-white" />
@@ -64,7 +63,7 @@ const MainMenu: React.FC = () => {
         </div>
         
         {/* Wealth Card */}
-        <Card className="bg-slate-800/60 backdrop-blur-md border-slate-600 mb-4 animate-scale-in flex-shrink-0">
+        <Card className="bg-slate-800/60 backdrop-blur-md border-slate-600 mb-4 animate-scale-in">
           <CardHeader className="pb-2">
             <CardTitle className="text-white text-center text-lg">Your Wealth</CardTitle>
           </CardHeader>
@@ -90,7 +89,7 @@ const MainMenu: React.FC = () => {
 
         {/* Daily Reward Notification */}
         {!state.dailyRewardClaimed && (
-          <Card className="bg-yellow-500/20 backdrop-blur-md border-yellow-400/30 mb-3 animate-pulse flex-shrink-0">
+          <Card className="bg-yellow-500/20 backdrop-blur-md border-yellow-400/30 mb-3 animate-pulse">
             <CardContent className="p-3 text-center">
               <div className="text-yellow-400 font-semibold mb-2 text-sm">Daily Bonus Available!</div>
               <Button
@@ -103,9 +102,9 @@ const MainMenu: React.FC = () => {
           </Card>
         )}
 
-        {/* Daily Spin Button - Only show if available */}
+        {/* Central Spin Wheel Button - Only show if daily spin is available */}
         {showDailySpinButton && (
-          <Card className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-md border-purple-400/30 mb-4 animate-scale-in flex-shrink-0">
+          <Card className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-md border-purple-400/30 mb-4 animate-scale-in">
             <CardContent className="p-3 text-center">
               <Button
                 onClick={handleSpinWheel}
@@ -122,61 +121,59 @@ const MainMenu: React.FC = () => {
           </Card>
         )}
         
-        {/* Main Action Buttons - Responsive grid based on available space */}
-        <div className="flex-1 flex flex-col justify-center min-h-0">
-          <div className={`grid gap-3 ${showDailySpinButton ? 'grid-rows-4' : 'grid-rows-4'} h-full`}>
-            <Button 
-              onClick={() => handleButtonClick('market')}
-              className={`w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in ${
-                showDailySpinButton ? 'py-4' : 'py-6'
-              }`}
-              style={{ animationDelay: '0.1s' }}
-            >
-              <Play className="w-6 h-6 mr-2" />
-              Start Trading
-            </Button>
-            
-            <Button 
-              onClick={() => handleButtonClick('shop')}
-              className={`w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in ${
-                showDailySpinButton ? 'py-4' : 'py-6'
-              }`}
-              style={{ animationDelay: '0.2s' }}
-            >
-              <ShoppingBag className="w-6 h-6 mr-2" />
-              Luxury Shop
-            </Button>
-            
-            <Button 
-              onClick={() => handleButtonClick('money-shop')}
-              className={`w-full bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 text-white text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in ${
-                showDailySpinButton ? 'py-4' : 'py-6'
-              }`}
-              style={{ animationDelay: '0.3s' }}
-            >
-              <DollarSign className="w-6 h-6 mr-2" />
-              Get Money
-            </Button>
-            
-            <Button 
-              onClick={() => handleButtonClick('inventory')}
-              className={`w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in ${
-                showDailySpinButton ? 'py-4' : 'py-6'
-              }`}
-              style={{ animationDelay: '0.4s' }}
-            >
-              <Package className="w-6 h-6 mr-2" />
-              My Collection
-            </Button>
-          </div>
+        {/* Main Action Buttons - Dynamic sizing based on available space */}
+        <div className="flex-1 flex flex-col justify-center space-y-3">
+          <Button 
+            onClick={() => handleButtonClick('market')}
+            className={`w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-base transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in ${
+              showDailySpinButton ? 'py-4' : 'py-6'
+            }`}
+            style={{ animationDelay: '0.1s' }}
+          >
+            <Play className="w-5 h-5 mr-2" />
+            Start Trading
+          </Button>
           
-          {/* Bottom Action Buttons - Enhanced responsiveness */}
-          <div className={`grid grid-cols-2 gap-3 mt-4 flex-shrink-0`}>
+          <Button 
+            onClick={() => handleButtonClick('shop')}
+            className={`w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white text-base transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in ${
+              showDailySpinButton ? 'py-4' : 'py-6'
+            }`}
+            style={{ animationDelay: '0.2s' }}
+          >
+            <ShoppingBag className="w-5 h-5 mr-2" />
+            Luxury Shop
+          </Button>
+          
+          <Button 
+            onClick={() => handleButtonClick('money-shop')}
+            className={`w-full bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 text-white text-base transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in ${
+              showDailySpinButton ? 'py-4' : 'py-6'
+            }`}
+            style={{ animationDelay: '0.3s' }}
+          >
+            <DollarSign className="w-5 h-5 mr-2" />
+            Get Money
+          </Button>
+          
+          <Button 
+            onClick={() => handleButtonClick('inventory')}
+            className={`w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white text-base transition-all duration-300 hover:scale-105 hover:shadow-lg animate-fade-in ${
+              showDailySpinButton ? 'py-4' : 'py-6'
+            }`}
+            style={{ animationDelay: '0.4s' }}
+          >
+            <Package className="w-5 h-5 mr-2" />
+            My Collection
+          </Button>
+          
+          {/* Bottom Action Buttons */}
+          <div className={`grid grid-cols-2 gap-3 ${showDailySpinButton ? 'mt-4' : 'mt-6'}`}>
             <Button 
               onClick={() => handleButtonClick('settings')}
               variant="outline"
               className={`bg-slate-800/50 border-slate-600 text-white hover:bg-slate-700 transition-all duration-300 hover:scale-105 animate-fade-in ${
-                showDailySpinButton ? 'py-3 text-sm' : 'py-4 text-base'
+                showDailySpinButton ? 'py-3' : 'py-4'
               }`}
               style={{ animationDelay: '0.5s' }}
             >
@@ -188,7 +185,7 @@ const MainMenu: React.FC = () => {
               onClick={() => handleButtonClick('help')}
               variant="outline"
               className={`bg-slate-800/50 border-slate-600 text-white hover:bg-slate-700 transition-all duration-300 hover:scale-105 animate-fade-in ${
-                showDailySpinButton ? 'py-3 text-sm' : 'py-4 text-base'
+                showDailySpinButton ? 'py-3' : 'py-4'
               }`}
               style={{ animationDelay: '0.6s' }}
             >
