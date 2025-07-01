@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useGame } from '../../contexts/GameContext';
 import { Button } from '../ui/button';
@@ -79,6 +78,14 @@ const TradingScreen: React.FC = () => {
       });
       setSellShares(1);
     }
+  };
+
+  const handleBuySharesChange = (shares: number) => {
+    setBuyShares(Math.max(0, Math.min(maxBuyShares, shares)));
+  };
+
+  const handleSellSharesChange = (shares: number) => {
+    setSellShares(Math.max(0, Math.min(maxSellShares, shares)));
   };
   
   const priceChange = getPriceChange();
@@ -191,7 +198,7 @@ const TradingScreen: React.FC = () => {
               <TradingControls
                 shares={buyShares}
                 maxShares={maxBuyShares}
-                onSharesChange={setBuyShares}
+                onSharesChange={handleBuySharesChange}
                 onAction={handleBuy}
                 actionLabel="Buy"
                 actionColor="bg-green-500 hover:bg-green-600"
@@ -202,7 +209,7 @@ const TradingScreen: React.FC = () => {
               <TradingControls
                 shares={sellShares}
                 maxShares={maxSellShares}
-                onSharesChange={setSellShares}
+                onSharesChange={handleSellSharesChange}
                 onAction={handleSell}
                 actionLabel="Sell"
                 actionColor="bg-red-500 hover:bg-red-600"

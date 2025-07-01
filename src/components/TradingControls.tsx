@@ -1,7 +1,7 @@
 
-import React from 'react';
+import React, { useRef, useCallback } from 'react';
 import { Button } from './ui/button';
-import { Minus, Plus } from 'lucide-react';
+import { Minus, Plus, RotateCcw } from 'lucide-react';
 
 interface TradingControlsProps {
   shares: number;
@@ -26,12 +26,58 @@ const TradingControls: React.FC<TradingControlsProps> = ({
   formatMoney,
   disabled = false
 }) => {
-  const adjustShares = (delta: number) => {
-    onSharesChange(Math.max(1, Math.min(maxShares, shares + delta)));
-  };
+  const holdIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const holdTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const adjustShares = useCallback((delta: number) => {
+    onSharesChange(Math.max(0, Math.min(maxShares, shares + delta)));
+  }, [shares, maxShares, onSharesChange]);
+
+  const startHolding = useCallback((delta: number) => {
+    // Clear any existing intervals
+    if (holdIntervalRef.current) clearInterval(holdIntervalRef.current);
+    if (holdTimeoutRef.current) clearTimeout(holdTimeoutRef.current);
+
+    // Initial adjustment
+    adjustShares(delta);
+
+    // Start with slower increments, then speed up
+    let speed = 200; // Start with 200ms intervals
+    
+    const startInterval = () => {
+      holdIntervalRef.current = setInterval(() => {
+        adjustShares(delta);
+        
+        // Gradually increase speed (decrease interval)
+        if (speed > 50) {
+          speed = Math.max(50, speed - 10);
+          clearInterval(holdIntervalRef.current!);
+          startInterval();
+        }
+      }, speed);
+    };
+
+    // Start the accelerating intervals after initial delay
+    holdTimeoutRef.current = setTimeout(startInterval, 300);
+  }, [adjustShares]);
+
+  const stopHolding = useCallback(() => {
+    if (holdIntervalRef.current) {
+      clearInterval(holdIntervalRef.current);
+      holdIntervalRef.current = null;
+    }
+    if (holdTimeoutRef.current) {
+      clearTimeout(holdTimeoutRef.current);
+      holdTimeoutRef.current = null;
+    }
+  }, []);
 
   const setToMax = () => {
     onSharesChange(maxShares);
+  };
+
+  const resetShares = () => {
+    onSharesChange(0);
   };
 
   const positiveIncrements = [5, 10, 25];
@@ -42,12 +88,16 @@ const TradingControls: React.FC<TradingControlsProps> = ({
       <div className="text-center">
         <div className="text-white/80 text-sm mb-3">Number of Shares</div>
         
-        {/* Main controls */}
+        {/* Main controls with hold functionality */}
         <div className="flex items-center justify-center gap-2 mb-3">
           <Button
-            onClick={() => adjustShares(-1)}
-            disabled={shares <= 1 || disabled}
-            className="w-12 h-12 bg-slate-600 hover:bg-slate-700 text-white p-0 rounded-full transition-all duration-200 hover:scale-105"
+            onMouseDown={() => startHolding(-1)}
+            onMouseUp={stopHolding}
+            onMouseLeave={stopHolding}
+            onTouchStart={() => startHolding(-1)}
+            onTouchEnd={stopHolding}
+            disabled={shares <= 0 || disabled}
+            className="w-12 h-12 bg-slate-600 hover:bg-slate-700 text-white p-0 rounded-full transition-all duration-200 hover:scale-105 active:scale-95"
           >
             <Minus className="w-5 h-5" />
           </Button>
@@ -57,11 +107,27 @@ const TradingControls: React.FC<TradingControlsProps> = ({
           </div>
           
           <Button
-            onClick={() => adjustShares(1)}
+            onMouseDown={() => startHolding(1)}
+            onMouseUp={stopHolding}
+            onMouseLeave={stopHolding}
+            onTouchStart={() => startHolding(1)}
+            onTouchEnd={stopHolding}
             disabled={shares >= maxShares || disabled}
-            className="w-12 h-12 bg-slate-600 hover:bg-slate-700 text-white p-0 rounded-full transition-all duration-200 hover:scale-105"
+            className="w-12 h-12 bg-slate-600 hover:bg-slate-700 text-white p-0 rounded-full transition-all duration-200 hover:scale-105 active:scale-95"
           >
             <Plus className="w-5 h-5" />
+          </Button>
+        </div>
+
+        {/* Reset button */}
+        <div className="flex justify-center mb-3">
+          <Button
+            onClick={resetShares}
+            disabled={shares === 0 || disabled}
+            className="bg-gray-600 hover:bg-gray-700 text-white text-sm px-4 py-2 h-8 transition-all duration-200 hover:scale-105 active:scale-95"
+          >
+            <RotateCcw className="w-4 h-4 mr-1" />
+            Reset
           </Button>
         </div>
 
@@ -71,8 +137,8 @@ const TradingControls: React.FC<TradingControlsProps> = ({
             <Button
               key={decrement}
               onClick={() => adjustShares(-decrement)}
-              disabled={shares - decrement < 1 || disabled}
-              className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1 h-8 transition-all duration-200 hover:scale-105"
+              disabled={shares - decrement < 0 || disabled}
+              className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1 h-8 transition-all duration-200 hover:scale-105 active:scale-95"
             >
               -{decrement}
             </Button>
@@ -86,7 +152,7 @@ const TradingControls: React.FC<TradingControlsProps> = ({
               key={increment}
               onClick={() => adjustShares(increment)}
               disabled={shares + increment > maxShares || disabled}
-              className="bg-green-600 hover:bg-green-700 text-white text-sm px-3 py-1 h-8 transition-all duration-200 hover:scale-105"
+              className="bg-green-600 hover:bg-green-700 text-white text-sm px-3 py-1 h-8 transition-all duration-200 hover:scale-105 active:scale-95"
             >
               +{increment}
             </Button>
@@ -95,7 +161,7 @@ const TradingControls: React.FC<TradingControlsProps> = ({
           <Button
             onClick={setToMax}
             disabled={maxShares === 0 || disabled}
-            className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 h-8 font-semibold transition-all duration-200 hover:scale-105"
+            className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 h-8 font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
           >
             MAX
           </Button>
@@ -108,7 +174,7 @@ const TradingControls: React.FC<TradingControlsProps> = ({
       
       <Button 
         onClick={onAction}
-        className={`w-full ${actionColor} text-white font-semibold py-4 text-lg transition-all duration-200 hover:scale-105`}
+        className={`w-full ${actionColor} text-white font-semibold py-4 text-lg transition-all duration-200 hover:scale-105 active:scale-95`}
         disabled={disabled || shares <= 0 || shares > maxShares || maxShares === 0}
       >
         {actionLabel} {disabled ? 0 : shares} Share{shares !== 1 ? 's' : ''}

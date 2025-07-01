@@ -205,15 +205,36 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       const revenue = amount * price;
       const remainingShares = holding.shares - amount;
       
-      // Prevent excessive profits - cap at 2x investment per stock
-      const totalInvested = holding.shares * holding.avgBuyPrice;
-      const currentValue = holding.shares * price;
-      const profitRatio = currentValue / totalInvested;
+      // Progressive profit limitation based on total wealth
+      const totalWealth = state.money + Object.entries(state.portfolio).reduce((total, [sId, h]) => {
+        const stock = state.stocks.find(s => s.id === sId);
+        return total + (stock ? h.shares * stock.price : 0);
+      }, 0);
       
       let finalRevenue = revenue;
-      if (profitRatio > 2) {
-        // Introduce diminishing returns
-        finalRevenue = revenue * 0.7;
+      
+      // Early game (under $50k wealth) - minimal restrictions
+      if (totalWealth < 50000) {
+        // Allow up to 3x profit with very little penalty
+        const profit = revenue - (amount * holding.avgBuyPrice);
+        const profitRatio = revenue / (amount * holding.avgBuyPrice);
+        if (profitRatio > 3) {
+          finalRevenue = revenue * 0.9; // Small 10% penalty only
+        }
+      }
+      // Mid game ($50k-$200k wealth) - moderate restrictions
+      else if (totalWealth < 200000) {
+        const profitRatio = revenue / (amount * holding.avgBuyPrice);
+        if (profitRatio > 2.5) {
+          finalRevenue = revenue * 0.8; // 20% penalty
+        }
+      }
+      // Late game ($200k+ wealth) - stricter limitations
+      else {
+        const profitRatio = revenue / (amount * holding.avgBuyPrice);
+        if (profitRatio > 2) {
+          finalRevenue = revenue * 0.7; // 30% penalty
+        }
       }
       
       return {
@@ -232,17 +253,40 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         stocks: state.stocks.map(stock => {
           const volatility = stock.volatility || 0.025;
           
-          // Dynamic difficulty based on total earnings
-          let baseChange = 0.001; // Small positive bias
-          if (state.totalEarnings > 50000) {
-            baseChange = -0.002; // Slight negative bias after earning 50k
+          // Calculate player's total wealth for dynamic difficulty
+          const totalWealth = state.money + Object.entries(state.portfolio).reduce((total, [stockId, holding]) => {
+            const s = state.stocks.find(s => s.id === stockId);
+            return total + (s ? holding.shares * s.price : 0);
+          }, 0);
+          
+          // Progressive difficulty based on wealth
+          let baseChange = 0;
+          let riskMultiplier = 1;
+          
+          // Early game (under $50k) - favorable conditions
+          if (totalWealth < 50000) {
+            baseChange = 0.002; // Small positive bias
+            riskMultiplier = 0.7; // Reduced volatility
           }
-          if (state.totalEarnings > 200000) {
-            baseChange = -0.005; // More negative bias after 200k
+          // Mid game ($50k-$200k) - neutral conditions
+          else if (totalWealth < 200000) {
+            baseChange = 0; // Neutral
+            riskMultiplier = 1; // Normal volatility
+          }
+          // Late game ($200k-$500k) - slightly challenging
+          else if (totalWealth < 500000) {
+            baseChange = -0.001; // Slight negative bias
+            riskMultiplier = 1.2; // Increased volatility
+          }
+          // End game ($500k+) - challenging
+          else {
+            baseChange = -0.003; // Negative bias
+            riskMultiplier = 1.4; // High volatility
           }
           
-          // Random movement with controlled volatility
-          const randomChange = (Math.random() - 0.5) * 2 * volatility;
+          // Apply progressive difficulty
+          const adjustedVolatility = volatility * riskMultiplier;
+          const randomChange = (Math.random() - 0.5) * 2 * adjustedVolatility;
           const changePercent = baseChange + randomChange;
           
           const change = stock.price * changePercent;
