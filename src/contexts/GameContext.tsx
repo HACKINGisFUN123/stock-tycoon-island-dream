@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
 export interface Stock {
@@ -47,6 +46,7 @@ interface GameState {
   loginStreak: number;
   tutorialCompleted: boolean;
   totalEarnings: number;
+  totalTradingVolume: number;
 }
 
 type GameAction = 
@@ -166,6 +166,7 @@ const initialState: GameState = {
   loginStreak: 1,
   tutorialCompleted: false,
   totalEarnings: 0,
+  totalTradingVolume: 0,
 };
 
 type GameContextType = {
@@ -189,6 +190,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       return {
         ...state,
         money: state.money - cost,
+        totalTradingVolume: state.totalTradingVolume + cost,
         portfolio: {
           ...state.portfolio,
           [stockId]: { shares: totalShares, avgBuyPrice }
@@ -205,35 +207,29 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       const revenue = amount * price;
       const remainingShares = holding.shares - amount;
       
-      // Progressive profit limitation based on total wealth
-      const totalWealth = state.money + Object.entries(state.portfolio).reduce((total, [sId, h]) => {
-        const stock = state.stocks.find(s => s.id === sId);
-        return total + (stock ? h.shares * stock.price : 0);
-      }, 0);
-      
+      // Progressive difficulty based on total trading volume
       let finalRevenue = revenue;
       
-      // Early game (under $50k wealth) - minimal restrictions
-      if (totalWealth < 50000) {
-        // Allow up to 3x profit with very little penalty
+      // Before $50,000 trading volume - easy to profit, hard to lose
+      if (state.totalTradingVolume < 50000) {
         const profit = revenue - (amount * holding.avgBuyPrice);
-        const profitRatio = revenue / (amount * holding.avgBuyPrice);
-        if (profitRatio > 3) {
-          finalRevenue = revenue * 0.9; // Small 10% penalty only
+        if (profit > 0) {
+          // Boost profits by 25%
+          finalRevenue = revenue + (profit * 0.25);
+        } else {
+          // Reduce losses by 50%
+          finalRevenue = revenue - (Math.abs(profit) * 0.5);
         }
       }
-      // Mid game ($50k-$200k wealth) - moderate restrictions
-      else if (totalWealth < 200000) {
-        const profitRatio = revenue / (amount * holding.avgBuyPrice);
-        if (profitRatio > 2.5) {
-          finalRevenue = revenue * 0.8; // 20% penalty
-        }
-      }
-      // Late game ($200k+ wealth) - stricter limitations
+      // After $50,000 trading volume - increased risk
       else {
-        const profitRatio = revenue / (amount * holding.avgBuyPrice);
-        if (profitRatio > 2) {
-          finalRevenue = revenue * 0.7; // 30% penalty
+        const profit = revenue - (amount * holding.avgBuyPrice);
+        if (profit > 0) {
+          // Reduce profits by 20%
+          finalRevenue = revenue - (profit * 0.2);
+        } else {
+          // Increase losses by 30%
+          finalRevenue = revenue - (Math.abs(profit) * 0.3);
         }
       }
       
@@ -241,6 +237,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         ...state,
         money: state.money + finalRevenue,
         totalEarnings: state.totalEarnings + Math.max(0, finalRevenue - (amount * holding.avgBuyPrice)),
+        totalTradingVolume: state.totalTradingVolume + revenue,
         portfolio: remainingShares > 0 
           ? { ...state.portfolio, [stockId]: { ...holding, shares: remainingShares } }
           : { ...Object.fromEntries(Object.entries(state.portfolio).filter(([key]) => key !== stockId)) }
@@ -253,38 +250,21 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         stocks: state.stocks.map(stock => {
           const volatility = stock.volatility || 0.025;
           
-          // Calculate player's total wealth for dynamic difficulty
-          const totalWealth = state.money + Object.entries(state.portfolio).reduce((total, [stockId, holding]) => {
-            const s = state.stocks.find(s => s.id === stockId);
-            return total + (s ? holding.shares * s.price : 0);
-          }, 0);
-          
-          // Progressive difficulty based on wealth
+          // Progressive difficulty based on trading volume
           let baseChange = 0;
           let riskMultiplier = 1;
           
-          // Early game (under $50k) - favorable conditions
-          if (totalWealth < 50000) {
-            baseChange = 0.002; // Small positive bias
-            riskMultiplier = 0.7; // Reduced volatility
+          // Before $50,000 trading volume - favorable conditions
+          if (state.totalTradingVolume < 50000) {
+            baseChange = 0.003; // Positive bias for easier profits
+            riskMultiplier = 0.6; // Lower volatility for stability
           }
-          // Mid game ($50k-$200k) - neutral conditions
-          else if (totalWealth < 200000) {
-            baseChange = 0; // Neutral
-            riskMultiplier = 1; // Normal volatility
-          }
-          // Late game ($200k-$500k) - slightly challenging
-          else if (totalWealth < 500000) {
-            baseChange = -0.001; // Slight negative bias
-            riskMultiplier = 1.2; // Increased volatility
-          }
-          // End game ($500k+) - challenging
+          // After $50,000 trading volume - challenging conditions
           else {
-            baseChange = -0.003; // Negative bias
-            riskMultiplier = 1.4; // High volatility
+            baseChange = -0.002; // Negative bias to increase difficulty
+            riskMultiplier = 1.5; // Higher volatility for more risk
           }
           
-          // Apply progressive difficulty
           const adjustedVolatility = volatility * riskMultiplier;
           const randomChange = (Math.random() - 0.5) * 2 * adjustedVolatility;
           const changePercent = baseChange + randomChange;

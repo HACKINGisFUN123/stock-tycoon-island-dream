@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useGame } from '../contexts/GameContext';
 import { Button } from './ui/button';
@@ -172,19 +171,21 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
         </CardHeader>
         
         <CardContent className="text-center flex flex-col items-center">
-          {/* Wheel Container - Perfectly Centered */}
+          {/* Wheel Container */}
           <div className="flex justify-center mb-4 relative">
-            {/* Static Arrow Pointer - Positioned above wheel */}
-            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-30 -mt-2">
+            {/* Static Arrow Pointer - Positioned above wheel and pointing to winning prize */}
+            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-30 -mt-3">
               <div 
-                className={`w-0 h-0 border-l-[12px] border-r-[12px] border-b-[20px] border-l-transparent border-r-transparent ${
+                className={`w-0 h-0 border-l-[15px] border-r-[15px] border-b-[25px] border-l-transparent border-r-transparent ${
                   isPremium ? 'border-b-yellow-400' : 'border-b-white'
                 } drop-shadow-2xl filter`}
-                style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.5))' }}
+                style={{ 
+                  filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.8))',
+                }}
               />
             </div>
             
-            {/* Casino Wheel - Perfectly Centered */}
+            {/* Casino Wheel */}
             <div className="relative flex items-center justify-center">
               <div
                 className={`w-80 h-80 rounded-full shadow-2xl ${
@@ -224,7 +225,7 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ onClose, isPremium = fa
                       }}
                     />
                     
-                    {/* Prize content - Positioned closer to edge */}
+                    {/* Prize content */}
                     <div
                       className="absolute flex flex-col items-center justify-center text-white font-bold z-5"
                       style={{
